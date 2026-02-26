@@ -52,4 +52,4 @@ jobs:
         env:
           NODE_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
-        run: npx jest --testPathPatterns=test/.*\\.e2e-spec\\.ts$
+        run: npx jest --testPathPatterns="e2e-spec"
