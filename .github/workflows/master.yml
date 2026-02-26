@@ -45,11 +45,11 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: postgres://postgres:postgres@postgres:5432/airlines_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
         run: npx drizzle-kit migrate --config=drizzle.config.test.ts
 
       - name: Run e2e tests
         env:
           NODE_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@postgres:5432/airlines_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
         run: npx jest --testPathPattern=test/.*\\.e2e-spec\\.ts$
