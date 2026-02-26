@@ -5,7 +5,7 @@ export default () => {
 
   if (!parsed.success) {
     console.error('Invalid environment variables:', parsed.error.format());
-    
+
     process.exit(1); // fail-fast
   }
 

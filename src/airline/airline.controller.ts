@@ -1,4 +1,14 @@
-import { Controller, Get, Query, Param, Post, Delete, ParseIntPipe, Body, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Param,
+  Post,
+  Delete,
+  ParseIntPipe,
+  Body,
+  Patch,
+} from '@nestjs/common';
 import { AirlineService } from './airline.service';
 import { GetAirlinesQueryDto } from './dto/get-airlines.dto';
 import { PatchAirlineDto } from './dto/patch-airline.dto';
@@ -34,7 +44,7 @@ export class AirlineController {
   @Patch(':id')
   updateAirline(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: PatchAirlineDto
+    @Body() body: PatchAirlineDto,
   ) {
     return this.airlineService.updateAirlineById(id, body);
   }
@@ -44,4 +54,3 @@ export class AirlineController {
     return this.airlineService.deleteAirlineById(id);
   }
 }
-

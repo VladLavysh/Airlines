@@ -6,12 +6,12 @@ export class PatchAirlineDto implements Partial<IAirline> {
   @IsString()
   @MaxLength(64)
   name?: string;
-  
+
   @IsOptional()
   @IsString()
   @MaxLength(3)
   iata_code?: string;
-  
+
   @IsOptional()
   @IsString()
   @MaxLength(32)

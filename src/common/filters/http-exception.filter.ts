@@ -4,7 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import { DrizzleQueryError } from 'drizzle-orm';
 import { Request, Response } from 'express';
@@ -12,7 +12,7 @@ import { Request, Response } from 'express';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
-  
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -25,7 +25,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Postgres errors
     if (exception instanceof DrizzleQueryError) {
       const errorCode = (exception.cause as any)?.code;
-      
+
       this.logger.error(
         `Database error: ${errorCode} - ${exception.message}`,
         exception.stack,

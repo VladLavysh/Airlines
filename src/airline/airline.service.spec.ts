@@ -35,7 +35,9 @@ describe('AirlineService', () => {
 
   describe('getAllAirlines', () => {
     it('should call repository findAll', async () => {
-      mockRepository.findAll.mockResolvedValue([{ id: 1, name: 'Test Airline' }]);
+      mockRepository.findAll.mockResolvedValue([
+        { id: 1, name: 'Test Airline' },
+      ]);
 
       const result = await service.getAllAirlines({ limit: 10, offset: 0 });
 
@@ -46,7 +48,9 @@ describe('AirlineService', () => {
 
   describe('getAirlineById', () => {
     it('should call repository findOneById', async () => {
-      mockRepository.findOneById.mockResolvedValue([{ id: 1, name: 'Test Airline' }]);
+      mockRepository.findOneById.mockResolvedValue([
+        { id: 1, name: 'Test Airline' },
+      ]);
 
       const result = await service.getAirlineById(1);
 
@@ -57,38 +61,58 @@ describe('AirlineService', () => {
 
   describe('createAirline', () => {
     it('should call repository createOne', async () => {
-      const airlineData = { name: 'New Airline', iata_code: 'NA', country: 'USA' };
+      const airlineData = {
+        name: 'New Airline',
+        iata_code: 'NA',
+        country: 'USA',
+      };
       mockRepository.createOne.mockResolvedValue([{ id: 1, ...airlineData }]);
 
       const result = await service.createAirline(airlineData);
 
-      expect(mockRepository.createOne).toHaveBeenCalledWith('New Airline', 'NA', 'USA');
+      expect(mockRepository.createOne).toHaveBeenCalledWith(
+        'New Airline',
+        'NA',
+        'USA',
+      );
       expect(result).toEqual([{ id: 1, ...airlineData }]);
     });
   });
 
   describe('updateAirlineById', () => {
     it('should update airline successfully', async () => {
-      const updatedAirline = { id: 1, name: 'Updated Airline', iata_code: 'UA', country: 'USA' };
+      const updatedAirline = {
+        id: 1,
+        name: 'Updated Airline',
+        iata_code: 'UA',
+        country: 'USA',
+      };
       mockRepository.updateOneById.mockResolvedValue([updatedAirline]);
 
-      const result = await service.updateAirlineById(1, { name: 'Updated Airline' });
+      const result = await service.updateAirlineById(1, {
+        name: 'Updated Airline',
+      });
 
-      expect(mockRepository.updateOneById).toHaveBeenCalledWith(1, { name: 'Updated Airline' });
+      expect(mockRepository.updateOneById).toHaveBeenCalledWith(1, {
+        name: 'Updated Airline',
+      });
       expect(result).toEqual(updatedAirline);
     });
 
     it('should throw NotFoundException when airline not found', async () => {
       mockRepository.updateOneById.mockResolvedValue([]);
 
-      await expect(service.updateAirlineById(999, { name: 'Updated' }))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.updateAirlineById(999, { name: 'Updated' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('deleteAirlineById', () => {
     it('should delete airline successfully', async () => {
-      mockRepository.deleteOneById.mockResolvedValue([{ id: 1, name: 'Test Airline' }]);
+      mockRepository.deleteOneById.mockResolvedValue([
+        { id: 1, name: 'Test Airline' },
+      ]);
 
       await service.deleteAirlineById(1);
 
@@ -98,8 +122,9 @@ describe('AirlineService', () => {
     it('should throw NotFoundException when airline not found', async () => {
       mockRepository.deleteOneById.mockResolvedValue([]);
 
-      await expect(service.deleteAirlineById(999))
-        .rejects.toThrow(NotFoundException);
+      await expect(service.deleteAirlineById(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

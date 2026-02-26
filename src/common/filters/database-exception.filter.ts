@@ -15,8 +15,10 @@ export class PostgresExceptionFilter implements ExceptionFilter {
   catch(exception: DatabaseError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    
-    this.logger.error(`Database error caught: ${exception.code} - ${exception.message}`);
+
+    this.logger.error(
+      `Database error caught: ${exception.code} - ${exception.message}`,
+    );
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
@@ -55,17 +57,18 @@ export class PostgresExceptionFilter implements ExceptionFilter {
         error = 'Service Unavailable';
         break;
       default:
-        this.logger.error(`Unhandled database error: ${exception.code}`, exception.stack);
+        this.logger.error(
+          `Unhandled database error: ${exception.code}`,
+          exception.stack,
+        );
         break;
     }
 
-    response
-      .status(status)
-      .json({
-        statusCode: status,
-        error,
-        message,
-        timestamp: new Date().toISOString(),
-      });
+    response.status(status).json({
+      statusCode: status,
+      error,
+      message,
+      timestamp: new Date().toISOString(),
+    });
   }
 }

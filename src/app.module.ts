@@ -15,14 +15,15 @@ import { AirlineModule } from './airline/airline.module';
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'info',
-        transport: process.env.NODE_ENV === 'production'
-          ? undefined
-          : {
-            target: 'pino-pretty',
-            options: {
-              colorize: true,
-            },
-          },
+        transport:
+          process.env.NODE_ENV === 'production'
+            ? undefined
+            : {
+                target: 'pino-pretty',
+                options: {
+                  colorize: true,
+                },
+              },
       },
     }),
     ThrottlerModule.forRoot({

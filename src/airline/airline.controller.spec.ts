@@ -34,18 +34,30 @@ describe('AirlineController', () => {
 
   describe('getAirlines', () => {
     it('should call service getAllAirlines', async () => {
-      mockService.getAllAirlines.mockResolvedValue([{ id: 1, name: 'Test Airline' }]);
+      mockService.getAllAirlines.mockResolvedValue([
+        { id: 1, name: 'Test Airline' },
+      ]);
 
-      const result = await controller.getAirlines({ limit: 10, offset: 0, search: 'test' });
+      const result = await controller.getAirlines({
+        limit: 10,
+        offset: 0,
+        search: 'test',
+      });
 
-      expect(mockService.getAllAirlines).toHaveBeenCalledWith({ limit: 10, offset: 0, search: 'test' });
+      expect(mockService.getAllAirlines).toHaveBeenCalledWith({
+        limit: 10,
+        offset: 0,
+        search: 'test',
+      });
       expect(result).toEqual([{ id: 1, name: 'Test Airline' }]);
     });
   });
 
   describe('getAirline', () => {
     it('should call service getAirlineById', async () => {
-      mockService.getAirlineById.mockResolvedValue([{ id: 1, name: 'Test Airline' }]);
+      mockService.getAirlineById.mockResolvedValue([
+        { id: 1, name: 'Test Airline' },
+      ]);
 
       const result = await controller.getAirline(1);
 
@@ -56,7 +68,11 @@ describe('AirlineController', () => {
 
   describe('createAirline', () => {
     it('should call service createAirline', async () => {
-      const airlineData = { name: 'New Airline', iata_code: 'NA', country: 'USA' };
+      const airlineData = {
+        name: 'New Airline',
+        iata_code: 'NA',
+        country: 'USA',
+      };
       mockService.createAirline.mockResolvedValue([{ id: 1, ...airlineData }]);
 
       const result = await controller.createAirline(airlineData);

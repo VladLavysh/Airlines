@@ -35,7 +35,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
-    })
+    }),
   );
   app.useGlobalFilters(new GlobalExceptionFilter());
   // app.useGlobalFilters(new PostgresExceptionFilter());

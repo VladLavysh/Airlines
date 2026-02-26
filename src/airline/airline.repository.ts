@@ -5,32 +5,20 @@ import { IAirline } from './types/airline.interface';
 
 @Injectable()
 export class AirlineRepository {
-  constructor(
-    @Inject('DB') private readonly db: any
-  ) {}
+  constructor(@Inject('DB') private readonly db: any) {}
 
   async findAll(limit: number, offset: number, search?: string) {
-    let query = this.db
-      .select()
-      .from(airline);
-    
+    let query = this.db.select().from(airline);
+
     if (search) {
-      query = query
-        .where(ilike(airline.name, `%${search}%`));
+      query = query.where(ilike(airline.name, `%${search}%`));
     }
 
-    return query
-      .orderBy(airline.name)
-      .limit(limit)
-      .offset(offset);
+    return query.orderBy(airline.name).limit(limit).offset(offset);
   }
 
   async findOneById(id: number) {
-    return this.db
-      .select()
-      .from(airline)
-      .where(eq(airline.id, id))
-      .limit(1);
+    return this.db.select().from(airline).where(eq(airline.id, id)).limit(1);
   }
 
   async createOne(name: string, iata_code: string, country: string) {
@@ -49,9 +37,6 @@ export class AirlineRepository {
   }
 
   async deleteOneById(id: number) {
-    return this.db
-      .delete(airline)
-      .where(eq(airline.id, id))
-      .returning();
+    return this.db.delete(airline).where(eq(airline.id, id)).returning();
   }
 }

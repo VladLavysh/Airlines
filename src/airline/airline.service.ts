@@ -9,7 +9,7 @@ export class AirlineService {
 
   getAllAirlines(data: IGetAllAirlines) {
     const { limit, offset, search } = data;
-    
+
     // Add redis cache
     return this.repo.findAll(limit, offset, search);
   }
@@ -36,10 +36,9 @@ export class AirlineService {
 
   async deleteAirlineById(id: number) {
     const rows = await this.repo.deleteOneById(id);
-    
+
     if (rows.length === 0) {
       throw new NotFoundException('Airline not found');
     }
   }
 }
-
