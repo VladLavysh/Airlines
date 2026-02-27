@@ -5,9 +5,8 @@ import { AppModule } from '../../src/app.module';
 
 describe('Airlines (e2e)', () => {
   let app: INestApplication;
-  let createdAirlineId: number;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -90,7 +89,7 @@ describe('Airlines (e2e)', () => {
         .expect(400);
     });
 
-    it('should return 400 for invalid IATA code format', async () => {
+    it('should return 400 when IATA code exceeds max length', async () => {
       await request(app.getHttpServer())
         .post('/api/v1/airline')
         .send({

@@ -9,21 +9,24 @@ on:
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      SERVER_CORS_ORIGIN: http://localhost:3000
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: airlines_test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
+      POSTGRES_DB: airlines_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
 
     services:
       postgres:
         image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: airlines_test
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d airlines_test"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -32,6 +35,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -44,21 +48,7 @@ jobs:
           done
 
       - name: Run migrations
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
         run: npx drizzle-kit migrate --config=drizzle.config.test.ts
 
       - name: Run e2e tests
-        env:
-          NODE_ENV: test
-          SERVER_CORS_ORIGIN: http://localhost:3000
-          DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: postgres
-          DATABASE_NAME: airlines_test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
-          POSTGRES_DB: airlines_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
         run: npx jest --testRegex=".*\\.e2e-spec\\.ts$"
