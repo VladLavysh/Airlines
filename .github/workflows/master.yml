@@ -51,5 +51,14 @@ jobs:
       - name: Run e2e tests
         env:
           NODE_ENV: test
+          SERVER_CORS_ORIGIN: http://localhost:3000
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_NAME: airlines_test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/airlines_test
+          POSTGRES_DB: airlines_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         run: npx jest --testRegex=".*\\.e2e-spec\\.ts$"
