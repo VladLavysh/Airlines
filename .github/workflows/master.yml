@@ -21,6 +21,8 @@ jobs:
       POSTGRES_DB: airlines_test
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
 
     services:
       postgres:
@@ -31,6 +33,10 @@ jobs:
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v3
