@@ -15,7 +15,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "test:e2e": "docker compose --profile test up -d db_test && npx drizzle-kit migrate --config=drizzle.config.test.ts && jest",
+    "test:e2e": "node scripts/test-e2e.js",
     "test:cov": "jest --coverage",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
