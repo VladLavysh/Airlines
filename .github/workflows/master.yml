@@ -25,6 +25,10 @@ jobs:
     services:
       postgres:
         image: postgres:15
+        env:
+          POSTGRES_DB: airlines_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
 
@@ -42,10 +46,15 @@ jobs:
 
       - name: Wait for Postgres
         run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U postgres; then
+              exit 0
+            fi
             echo "Waiting for postgres..."
             sleep 2
           done
+          echo "Postgres did not become ready in time"
+          exit 1
 
       - name: Run migrations
         run: npx drizzle-kit migrate --config=drizzle.config.test.ts
