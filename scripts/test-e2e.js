@@ -1,4 +1,4 @@
-const { spawnSync } = require('node:child_process');
+import { spawnSync } from 'node:child_process';
 
 function run(command) {
   const result = spawnSync(command, { stdio: 'inherit', shell: true });

@@ -18,6 +18,10 @@ export const EnvSchema = z.object({
   POSTGRES_DB: z.string().min(1),
   POSTGRES_USER: z.string().min(1),
   POSTGRES_PASSWORD: z.string().min(1),
+
+  // Redis Configuration
+  REDIS_HOST: z.string().min(1),
+  REDIS_PORT: z.coerce.number().default(6379),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
