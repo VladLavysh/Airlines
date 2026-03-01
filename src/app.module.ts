@@ -7,6 +7,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 import configuration from './config/configuration';
 import { DbModule } from './db/db.module';
 import { AirlineModule } from './airline/airline.module';
+import { AircraftModule } from './aircraft/aircraft.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { AirlineModule } from './airline/airline.module';
     }),
     DbModule,
     AirlineModule,
+    AircraftModule,
   ],
 })
 export class AppModule {}

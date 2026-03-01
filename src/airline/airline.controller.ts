@@ -34,6 +34,8 @@ export class AirlineController {
     });
   }
 
+  @UseInterceptors(CacheLoggingInterceptor)
+  @CacheTTL(60_000)
   @Get(':id')
   getAirline(@Param('id', ParseIntPipe) id: number) {
     return this.airlineService.getAirlineById(id);

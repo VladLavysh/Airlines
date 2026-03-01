@@ -66,4 +66,4 @@ jobs:
         run: npx drizzle-kit migrate --config=drizzle.config.test.ts
 
       - name: Run e2e tests
-        run: npx jest --testRegex=".*\\.e2e-spec\\.ts$"
+        run: npx jest --testRegex=".*\\.e2e-spec\\.ts$" --testPathIgnorePatterns="/node_modules/"

@@ -77,6 +77,7 @@ npm run start:prod
 
 ### Database Management
 
+#### When using Docker (recommended)
 ```bash
 # Generate database migrations
 npm run db:generate
@@ -87,6 +88,20 @@ npm run db:migrate
 # Push schema changes to database
 npm run db:push
 ```
+
+#### When running locally (without Docker)
+```bash
+# Generate database migrations
+npm run db:generate:local
+
+# Run database migrations
+npm run db:migrate:local
+
+# Push schema changes to database
+npm run db:push:local
+```
+
+**Note**: The `:local` variants use `localhost` for database connection, while the standard commands use the Docker service name `db`. Use `:local` commands when running migrations on your local machine outside of Docker containers.
 
 ## Testing
 
@@ -103,6 +118,12 @@ npm run test:cov
 # Run end-to-end tests
 npm run test:e2e
 ```
+
+### Local e2e notes
+
+- Copy `.env.test.example` to `.env.test` if you need custom local test values.
+- `npm run test:e2e` now starts isolated test dependencies (`db_test` on `5433` and `redis_test` on `6380`), waits for readiness, runs migrations, and then executes only `*.e2e-spec.ts` tests.
+- CI remains unchanged and can continue to run migrations/tests with CI-provided environment variables.
 
 ## API Documentation
 
