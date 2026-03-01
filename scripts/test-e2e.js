@@ -1,6 +1,6 @@
-import { spawnSync } from 'node:child_process';
-import net from 'node:net';
-import { config as dotenvConfig } from 'dotenv';
+const { spawnSync } = require('node:child_process');
+const net = require('node:net');
+const { config: dotenvConfig } = require('dotenv');
 
 dotenvConfig({ path: '.env.test', override: false });
 
@@ -101,7 +101,9 @@ async function main() {
     );
 
     run('npx drizzle-kit migrate --config=drizzle.config.test.ts');
-    run('npx jest --testRegex=".*\\.e2e-spec\\.ts$"');
+    run(
+      'npx jest --testRegex=".*\\.e2e-spec\\.ts$" --testPathIgnorePatterns="/node_modules/"',
+    );
   } catch (error) {
     exitCode = error.exitCode || 1;
   } finally {
