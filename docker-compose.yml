@@ -78,6 +78,18 @@ services:
       timeout: 3s
       retries: 5
 
+  # Redis for e2e
+  redis_test:
+    image: redis:8.6-alpine
+    profiles: [ test ]
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
 volumes:
   server_data:
   pg_data:
