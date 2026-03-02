@@ -1,13 +1,22 @@
+export const AIRCRAFT_ORDER_BY_FIELDS = [
+  'name',
+  'registration_number',
+  'manufacturer',
+  'year',
+  'airline_id',
+] as const;
+export type AircraftOrderByField = (typeof AIRCRAFT_ORDER_BY_FIELDS)[number];
+
 export interface IGetAllAircraft extends IEntityFields {
   limit: number;
   offset: number;
-  order_by: keyof IEntityFields;
+  order_by: AircraftOrderByField;
   order: 'asc' | 'desc';
   total_seats_from?: number;
   total_seats_to?: number;
 }
 
-export interface IEntityFields {
+interface IEntityFields {
   name?: string;
   registration_number?: string;
   manufacturer?: string;

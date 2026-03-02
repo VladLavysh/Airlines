@@ -8,10 +8,7 @@ export class AirlineService {
   constructor(private repo: AirlineRepository) {}
 
   getAllAirlines(data: IGetAllAirlines) {
-    const { limit, offset, search } = data;
-
-    // Add redis cache
-    return this.repo.findAll(limit, offset, search);
+    return this.repo.findAll(data);
   }
 
   getAirlineById(id: number) {

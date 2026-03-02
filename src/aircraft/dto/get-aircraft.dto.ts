@@ -1,6 +1,15 @@
-import { IsInt, Min, Max, IsOptional, IsString, MaxLength, IsNotEmpty, IsEnum } from 'class-validator';
+import {
+  IsInt,
+  Min,
+  Max,
+  IsOptional,
+  IsString,
+  MaxLength,
+  IsNotEmpty,
+  IsEnum,
+  IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IEntityFields, IGetAllAircraft } from '../types/get-all-aircraft.interface';
+import { IGetAllAircraft, AIRCRAFT_ORDER_BY_FIELDS } from '../types/get-all-aircraft.interface';
 
 export class GetAircraftQueryDto implements IGetAllAircraft {
   @Transform(({ value }) => parseInt(value, 10))
@@ -17,7 +26,8 @@ export class GetAircraftQueryDto implements IGetAllAircraft {
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()
   @IsString()
-  order_by: keyof IEntityFields = 'name';
+  @IsIn(AIRCRAFT_ORDER_BY_FIELDS)
+  order_by: (typeof AIRCRAFT_ORDER_BY_FIELDS)[number] = 'name';
 
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()

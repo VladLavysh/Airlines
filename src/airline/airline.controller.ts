@@ -25,13 +25,7 @@ export class AirlineController {
   @CacheTTL(60_000)
   @Get()
   getAirlines(@Query() query: GetAirlinesQueryDto) {
-    const { limit, offset, search } = query;
-
-    return this.airlineService.getAllAirlines({
-      limit,
-      offset,
-      search,
-    });
+    return this.airlineService.getAllAirlines(query);
   }
 
   @UseInterceptors(CacheLoggingInterceptor)
