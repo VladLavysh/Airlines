@@ -7,7 +7,7 @@ import {
   Max,
   IsArray,
 } from 'class-validator';
-import { IAircraft } from '../types/aircraft.interface';
+import { IAircraft } from 'src/aircraft/types/aircraft.interface';
 import type { IAircraftSeat } from 'src/seat/types/seat.interface';
 
 export class PatchAircraftDto implements Partial<IAircraft> {

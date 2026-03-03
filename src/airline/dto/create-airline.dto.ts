@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
-import { IAirline } from '../types/airline.interface';
+import { IAirline } from 'src/airline/types/airline.interface';
 
 export class CreateAirlineDto implements IAirline {
   @IsNotEmpty()

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { aircraft } from '../db/schema';
-import { eq, gte, lte, ilike, and, SQL, asc, desc } from 'drizzle-orm';
+import { eq, ilike, and, SQL, asc, desc } from 'drizzle-orm';
+import { aircraft } from 'src/db/schema';
 import { IAircraft } from './types/aircraft.interface';
 import { IGetAllAircraft } from './types/get-all-aircraft.interface';
 

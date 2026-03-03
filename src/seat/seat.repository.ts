@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { seat } from '../db/schema';
-import { IAircraftSeat } from 'src/seat/types/seat.interface';
 import { eq } from 'drizzle-orm';
+import { seat } from 'src/db/schema';
+import { IAircraftSeat } from 'src/seat/types/seat.interface';
 
 @Injectable()
 export class SeatRepository {

@@ -10,7 +10,7 @@ import {
   IsIn, 
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IGetAllAircraft, AIRCRAFT_ORDER_BY_FIELDS } from '../types/get-all-aircraft.interface';
+import { IGetAllAircraft, AIRCRAFT_ORDER_BY_FIELDS } from 'src/aircraft/types/get-all-aircraft.interface';
 
 export class GetAircraftQueryDto implements IGetAllAircraft {
   @Transform(({ value }) => parseInt(value, 10))

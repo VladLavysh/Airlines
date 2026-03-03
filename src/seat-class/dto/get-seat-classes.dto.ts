@@ -8,7 +8,7 @@ import {
   MaxLength,
   IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IGetAllSeatClasses, SEAT_CLASS_ORDER_BY_FIELDS } from '../types/get-all-seat-classes.interface';
+import { IGetAllSeatClasses, SEAT_CLASS_ORDER_BY_FIELDS } from 'src/seat-class/types/get-all-seat-classes.interface';
 
 export class GetSeatClassesQueryDto implements IGetAllSeatClasses {
   @Transform(({ value }) => parseInt(value, 10))

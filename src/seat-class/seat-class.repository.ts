@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { seat_class } from '../db/schema';
+import { seat_class } from 'src/db/schema';
 import { eq, ilike, SQL, asc, desc, and } from 'drizzle-orm';
 import { IGetAllSeatClasses } from './types/get-all-seat-classes.interface';
 import { ISeatClass } from './types/seat-class.interface';

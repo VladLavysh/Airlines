@@ -7,7 +7,7 @@ import {
   Max,
   IsArray,
 } from 'class-validator';
-import type { IAircraft } from '../types/aircraft.interface';
+import type { IAircraft } from 'src/aircraft/types/aircraft.interface';
 import type { IAircraftSeat } from 'src/seat/types/seat.interface'
 
 export class CreateAircraftDto implements IAircraft {

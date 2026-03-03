@@ -8,7 +8,7 @@ import {
   MaxLength,
   IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IGetAllAirlines, AIRLINE_ORDER_BY_FIELDS } from '../types/get-all-airlines.interface';
+import { IGetAllAirlines, AIRLINE_ORDER_BY_FIELDS } from 'src/airline/types/get-all-airlines.interface';
 
 export class GetAirlinesQueryDto implements IGetAllAirlines {
   @Transform(({ value }) => parseInt(value, 10))

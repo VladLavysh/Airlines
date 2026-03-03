@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MaxLength, IsNumber, IsPositive } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { ISeatClass } from '../types/seat-class.interface';
+import { ISeatClass } from 'src/seat-class/types/seat-class.interface';
 
 export class CreateSeatClassDto implements ISeatClass {
   @IsNotEmpty()

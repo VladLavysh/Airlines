@@ -15,7 +15,7 @@ import { GetSeatClassesQueryDto } from './dto/get-seat-classes.dto';
 import { PatchSeatClassDto } from './dto/patch-seat-class.dto';
 import { CreateSeatClassDto } from './dto/create-seat-class.dto';
 import { CacheTTL } from '@nestjs/cache-manager';
-import { CacheLoggingInterceptor } from '../common/interceptors/cache-logging.interceptor';
+import { CacheLoggingInterceptor } from 'src/common/interceptors/cache-logging.interceptor';
 
 @Controller('seat-class')
 export class SeatClassController {
