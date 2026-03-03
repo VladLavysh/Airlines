@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { eq, ilike, and, SQL, asc, desc } from 'drizzle-orm';
-import { aircraft } from 'src/db/schema';
+import { eq, ilike, and, SQL, asc, desc, count, sql } from 'drizzle-orm';
+import { aircraft, seat } from 'src/db/schema';
 import { IAircraft } from './types/aircraft.interface';
 import { IGetAllAircraft } from './types/get-all-aircraft.interface';
 
@@ -32,9 +32,27 @@ export class AircraftRepository {
     const orderColumn = aircraft[order_by];
     const orderFn = order === 'desc' ? desc : asc;
 
+    const seatCountSubquery = this.db
+      .select({
+        aircraft_id: seat.aircraft_id,
+        total_seats: count(seat.id).as('total_seats')
+      })
+      .from(seat)
+      .groupBy(seat.aircraft_id)
+      .as('seat_counts');
+  
     return this.db
-      .select()
+      .select({
+        id: aircraft.id,
+        name: aircraft.name,
+        registration_number: aircraft.registration_number,
+        manufacturer: aircraft.manufacturer,
+        year: aircraft.year,
+        airline_id: aircraft.airline_id,
+        total_seats: sql<number>`COALESCE(${seatCountSubquery.total_seats}, 0)::integer`
+      })
       .from(aircraft)
+      .leftJoin(seatCountSubquery, eq(seatCountSubquery.aircraft_id, aircraft.id))
       .where(filters.length > 0 ? and(...filters) : undefined)
       .orderBy(orderFn(orderColumn))
       .limit(limit)
@@ -49,7 +67,8 @@ export class AircraftRepository {
       with: {
         seats: {
           columns: {
-            seat_class_id: false
+            seat_class_id: false,
+            aircraft_id: false
           },
           with: {
             class: true
