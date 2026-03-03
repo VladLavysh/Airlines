@@ -5,8 +5,10 @@ import {
   IsInt,
   Min,
   Max,
+  IsArray,
 } from 'class-validator';
 import { IAircraft } from '../types/aircraft.interface';
+import type { IAircraftSeat } from 'src/seat/types/seat.interface';
 
 export class PatchAircraftDto implements Partial<IAircraft> {
   @IsOptional()
@@ -31,9 +33,8 @@ export class PatchAircraftDto implements Partial<IAircraft> {
   year?: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  total_seats?: number;
+  @IsArray()
+  seats?: IAircraftSeat[];
 
   @IsOptional()
   @IsInt()

@@ -7,7 +7,8 @@ import {
   MaxLength,
   IsNotEmpty,
   IsEnum,
-  IsIn } from 'class-validator';
+  IsIn, 
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { IGetAllAircraft, AIRCRAFT_ORDER_BY_FIELDS } from '../types/get-all-aircraft.interface';
 
@@ -56,18 +57,6 @@ export class GetAircraftQueryDto implements IGetAllAircraft {
   @Min(1900)
   @Max(2100)
   year?: number;
-
-  @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  total_seats_from?: number;
-
-  @IsOptional()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(2)
-  total_seats_to?: number;
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
