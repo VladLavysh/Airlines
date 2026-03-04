@@ -8,6 +8,7 @@ import configuration from './config/configuration';
 import { DbModule } from './db/db.module';
 import { AirlineModule } from './airline/airline.module';
 import { AircraftModule } from './aircraft/aircraft.module';
+import { RouteModule } from './route/route.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { AircraftModule } from './aircraft/aircraft.module';
     DbModule,
     AirlineModule,
     AircraftModule,
+    RouteModule,
   ],
 })
 export class AppModule {}

@@ -27,3 +27,13 @@ export const aircraft = pgTable(
   },
   (table) => [index('aircraft_airline_id_idx').on(table.airline_id)],
 );
+
+export const route = pgTable(
+  'route',
+  {
+    id: serial('id').primaryKey(),
+    departure_airport: varchar('departure_airport', { length: 32 }).notNull(),
+    arrival_airport: varchar('arrival_airport', { length: 32 }).notNull(),
+    distanceKM: integer('distance').notNull()
+  }
+)
