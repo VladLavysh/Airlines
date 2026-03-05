@@ -9,6 +9,8 @@ import { DbModule } from './db/db.module';
 import { AirlineModule } from './airline/airline.module';
 import { AircraftModule } from './aircraft/aircraft.module';
 import { RouteModule } from './route/route.module';
+import { SeatModule } from './seat/seat.module';
+import { SeatClassModule } from './seat-class/seat-class.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { RouteModule } from './route/route.module';
     AirlineModule,
     AircraftModule,
     RouteModule,
+    SeatClassModule,
+    SeatModule,
   ],
 })
 export class AppModule {}

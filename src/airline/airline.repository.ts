@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { airline } from '../db/schema';
+import { airline } from 'src/db/schema';
 import { eq, ilike, SQL, asc, desc, and } from 'drizzle-orm';
 import { IGetAllAirlines } from './types/get-all-airlines.interface';
 import { IAirline } from './types/airline.interface';
