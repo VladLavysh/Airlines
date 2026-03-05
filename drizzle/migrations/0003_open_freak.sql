@@ -1,0 +1,1 @@
+ALTER TABLE "seat_classes" ALTER COLUMN "price_multiplier" SET DATA TYPE numeric(4, 2);

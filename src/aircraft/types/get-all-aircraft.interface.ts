@@ -12,8 +12,6 @@ export interface IGetAllAircraft extends IEntityFields {
   offset: number;
   order_by: AircraftOrderByField;
   order: 'asc' | 'desc';
-  total_seats_from?: number;
-  total_seats_to?: number;
 }
 
 interface IEntityFields {

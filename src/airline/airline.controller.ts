@@ -15,7 +15,7 @@ import { GetAirlinesQueryDto } from './dto/get-airlines.dto';
 import { PatchAirlineDto } from './dto/patch-airline.dto';
 import { CreateAirlineDto } from './dto/create-airline.dto';
 import { CacheTTL } from '@nestjs/cache-manager';
-import { CacheLoggingInterceptor } from '../common/interceptors/cache-logging.interceptor';
+import { CacheLoggingInterceptor } from 'src/common/interceptors/cache-logging.interceptor';
 
 @Controller('airline')
 export class AirlineController {

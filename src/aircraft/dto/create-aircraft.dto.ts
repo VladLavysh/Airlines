@@ -5,8 +5,12 @@ import {
   IsInt,
   Min,
   Max,
+  IsArray,
+  ArrayNotEmpty
 } from 'class-validator';
-import { IAircraft } from '../types/aircraft.interface';
+import type { IAircraft } from 'src/aircraft/types/aircraft.interface';
+import type { IAircraftSeat } from 'src/seat/types/seat.interface';
+import IsValidSeats from 'src/aircraft/validators/is-valid-seats.validator';
 
 export class CreateAircraftDto implements IAircraft {
   @IsNotEmpty()
@@ -31,9 +35,10 @@ export class CreateAircraftDto implements IAircraft {
   year: number;
 
   @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  total_seats: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsValidSeats()
+  seats: IAircraftSeat[]
 
   @IsNotEmpty()
   @IsInt()

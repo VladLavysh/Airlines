@@ -8,9 +8,9 @@ import {
   MaxLength,
   IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IGetAllAirlines, AIRLINE_ORDER_BY_FIELDS } from 'src/airline/types/get-all-airlines.interface';
+import { IGetAllSeatClasses, SEAT_CLASS_ORDER_BY_FIELDS } from 'src/seat-class/types/get-all-seat-classes.interface';
 
-export class GetAirlinesQueryDto implements IGetAllAirlines {
+export class GetSeatClassesQueryDto implements IGetAllSeatClasses {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
@@ -24,8 +24,8 @@ export class GetAirlinesQueryDto implements IGetAllAirlines {
 
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()
-  @IsIn(AIRLINE_ORDER_BY_FIELDS)
-  order_by: (typeof AIRLINE_ORDER_BY_FIELDS)[number] = 'name';
+  @IsIn(SEAT_CLASS_ORDER_BY_FIELDS)
+  order_by: (typeof SEAT_CLASS_ORDER_BY_FIELDS)[number] = 'name';
 
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()
@@ -34,16 +34,10 @@ export class GetAirlinesQueryDto implements IGetAllAirlines {
 
   @IsOptional()
   @IsString()
-  @MaxLength(64)
+  @MaxLength(20)
   name?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(3)
-  iata_code?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(32)
-  country?: string;
+  price_multiplier?: string;
 }

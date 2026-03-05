@@ -15,7 +15,7 @@ import { GetAircraftQueryDto } from './dto/get-aircraft.dto';
 import { PatchAircraftDto } from './dto/patch-aircraft.dto';
 import { CreateAircraftDto } from './dto/create-aircraft.dto';
 import { CacheTTL } from '@nestjs/cache-manager';
-import { CacheLoggingInterceptor } from '../common/interceptors/cache-logging.interceptor';
+import { CacheLoggingInterceptor } from 'src/common/interceptors/cache-logging.interceptor';
 
 @Controller('aircraft')
 export class AircraftController {
