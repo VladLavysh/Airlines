@@ -15,5 +15,5 @@ export class PatchRouteDto implements Partial<IRoute> {
   @IsOptional()
   @IsInt()
   @Min(1)
-  distanceKM?: number;
+  distance_km?: number;
 }

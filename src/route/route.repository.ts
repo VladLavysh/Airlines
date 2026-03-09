@@ -16,13 +16,13 @@ export class RouteRepository {
       order,
       departure_airport,
       arrival_airport,
-      distanceKM,
+      distance_km,
     } = data;
 
     const filters = [
       departure_airport && ilike(route.departure_airport, `%${departure_airport}%`),
       arrival_airport && ilike(route.arrival_airport, `%${arrival_airport}%`),
-      distanceKM && eq(route.distanceKM, distanceKM),
+      distance_km && eq(route.distance, distance_km),
     ].filter(Boolean) as SQL[];
 
     const orderColumn = route[order_by];
@@ -46,11 +46,11 @@ export class RouteRepository {
   }
 
   async createOne(data: IRoute) {
-    const { departure_airport, arrival_airport, distanceKM } = data;
+    const { departure_airport, arrival_airport, distance_km } = data;
     
     return this.db
       .insert(route)
-      .values({ departure_airport, arrival_airport, distanceKM })
+      .values({ departure_airport, arrival_airport, distance_km })
       .returning();
   }
 

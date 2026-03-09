@@ -87,7 +87,7 @@ export const route = pgTable(
     id: serial('id').primaryKey(),
     departure_airport: varchar('departure_airport', { length: 32 }).notNull(),
     arrival_airport: varchar('arrival_airport', { length: 32 }).notNull(),
-    distanceKM: integer('distance').notNull()
+    distance: integer('distance').notNull()
   }
 )
 
@@ -97,17 +97,17 @@ export const flight = pgTable(
     id: serial('id').primaryKey(),
     departure_time: timestamp('departure_time').notNull(),
     arrival_time: timestamp('arrival_time').notNull(),
-    status: varchar('arrival_airport', { length: 32 }).notNull(),
+    flight_status: varchar('flight_status', { length: 32 }).notNull(),
 
     route_id: integer('route_id')
       .notNull()
-      .references(() => airline.id, {
+      .references(() => route.id, {
         onDelete: 'restrict',
         onUpdate: 'cascade'
       }),
     aircraft_id: integer('aircraft_id')
       .notNull()
-      .references(() => airline.id, {
+      .references(() => aircraft.id, {
         onDelete: 'restrict',
         onUpdate: 'cascade'
       }),
@@ -115,7 +115,7 @@ export const flight = pgTable(
       .notNull()
       .references(() => airline.id, {
         onDelete: 'restrict',
-        onUpdate: 'cascade'
+        onUpdate: 'restrict'
       })
   },
   (table) => [
@@ -124,3 +124,17 @@ export const flight = pgTable(
     index('flight_airline_id_idx').on(table.airline_id)
   ]
 )
+export const flightRelations = relations(flight, ({ one }) => ({
+  route: one(route, {
+    fields: [flight.route_id],
+    references: [route.id],
+  }),
+  aircraft: one(aircraft, {
+    fields: [flight.aircraft_id],
+    references: [aircraft.id],
+  }),
+  airline: one(airline, {
+    fields: [flight.airline_id],
+    references: [airline.id],
+  }),
+}));

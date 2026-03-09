@@ -22,6 +22,20 @@
       "when": 1772643105640,
       "tag": "0002_overrated_invaders",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772734120155,
+      "tag": "0003_blushing_darkhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773052250091,
+      "tag": "0004_mute_pestilence",
+      "breakpoints": true
     }
   ]
 }

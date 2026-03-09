@@ -1,4 +1,4 @@
-export const ROUTE_ORDER_BY_FIELDS = ['departure_airport', 'arrival_airport', 'distanceKM'] as const;
+export const ROUTE_ORDER_BY_FIELDS = ['departure_airport', 'arrival_airport', 'distance_km'] as const;
 export type RouteOrderByField = (typeof ROUTE_ORDER_BY_FIELDS)[number];
 
 export interface IGetAllRoutes extends IEntityFields {
@@ -11,5 +11,5 @@ export interface IGetAllRoutes extends IEntityFields {
 interface IEntityFields {
   departure_airport?: string;
   arrival_airport?: string;
-  distanceKM?: number;
+  distance_km?: number;
 }

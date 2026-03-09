@@ -46,5 +46,5 @@ export class GetRoutesQueryDto implements IGetAllRoutes {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
-  distanceKM?: number;
+  distance_km?: number;
 }

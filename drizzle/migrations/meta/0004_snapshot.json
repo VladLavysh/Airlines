@@ -1,6 +1,6 @@
 {
-  "id": "99fd074d-ed98-49a9-9c15-d31c3d3dfb47",
-  "prevId": "c0947608-4085-4df9-b16c-709f2a347a0b",
+  "id": "b50091ca-6b11-4ca2-9e37-3df9be074ace",
+  "prevId": "312ee9ee-73b0-4bb9-9501-73e205a59a6c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -38,12 +38,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "total_seats": {
-          "name": "total_seats",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "airline_id": {
           "name": "airline_id",
           "type": "integer",
@@ -63,34 +57,34 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "aircraft_airline_id_airline_id_fk": {
           "name": "aircraft_airline_id_airline_id_fk",
           "tableFrom": "aircraft",
+          "tableTo": "airline",
           "columnsFrom": [
             "airline_id"
           ],
-          "tableTo": "airline",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "restrict",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "restrict"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "aircraft_registration_number_unique": {
           "name": "aircraft_registration_number_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "registration_number"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -132,12 +126,190 @@
       "uniqueConstraints": {
         "airline_iata_code_unique": {
           "name": "airline_iata_code_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "iata_code"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.flight": {
+      "name": "flight",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "departure_time": {
+          "name": "departure_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "arrival_time": {
+          "name": "arrival_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "flight_status": {
+          "name": "flight_status",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "route_id": {
+          "name": "route_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "aircraft_id": {
+          "name": "aircraft_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "airline_id": {
+          "name": "airline_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "flight_route_id_idx": {
+          "name": "flight_route_id_idx",
+          "columns": [
+            {
+              "expression": "route_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "flight_aircraft_id_idx": {
+          "name": "flight_aircraft_id_idx",
+          "columns": [
+            {
+              "expression": "aircraft_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "flight_airline_id_idx": {
+          "name": "flight_airline_id_idx",
+          "columns": [
+            {
+              "expression": "airline_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "flight_route_id_route_id_fk": {
+          "name": "flight_route_id_route_id_fk",
+          "tableFrom": "flight",
+          "tableTo": "route",
+          "columnsFrom": [
+            "route_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "flight_aircraft_id_aircraft_id_fk": {
+          "name": "flight_aircraft_id_aircraft_id_fk",
+          "tableFrom": "flight",
+          "tableTo": "aircraft",
+          "columnsFrom": [
+            "aircraft_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "flight_airline_id_airline_id_fk": {
+          "name": "flight_airline_id_airline_id_fk",
+          "tableFrom": "flight",
+          "tableTo": "airline",
+          "columnsFrom": [
+            "airline_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.route": {
+      "name": "route",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "departure_airport": {
+          "name": "departure_airport",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "arrival_airport": {
+          "name": "arrival_airport",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "distance": {
+          "name": "distance",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -183,9 +355,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "seat_aircraft_id_idx": {
           "name": "seat_aircraft_id_idx",
@@ -198,74 +370,63 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
-        "seat_seat_class_id_seat_classes_id_fk": {
-          "name": "seat_seat_class_id_seat_classes_id_fk",
+        "seat_seat_class_id_seat_class_id_fk": {
+          "name": "seat_seat_class_id_seat_class_id_fk",
           "tableFrom": "seat",
+          "tableTo": "seat_class",
           "columnsFrom": [
             "seat_class_id"
           ],
-          "tableTo": "seat_classes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "seat_aircraft_id_aircraft_id_fk": {
           "name": "seat_aircraft_id_aircraft_id_fk",
           "tableFrom": "seat",
+          "tableTo": "aircraft",
           "columnsFrom": [
             "aircraft_id"
           ],
-          "tableTo": "aircraft",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "cascade",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "unique_seat_number_per_aircraft": {
           "name": "unique_seat_number_per_aircraft",
+          "nullsNotDistinct": false,
           "columns": [
             "seat_number",
             "aircraft_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.seat_classes": {
-      "name": "seat_classes",
+    "public.seat_class": {
+      "name": "seat_class",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "name": "seat_classes_id_seq",
-            "increment": "1",
-            "minValue": "1",
-            "maxValue": "9223372036854775807",
-            "startWith": "1",
-            "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "always"
-          }
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -291,10 +452,10 @@
   },
   "enums": {},
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

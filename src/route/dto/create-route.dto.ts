@@ -15,5 +15,5 @@ export class CreateRouteDto implements IRoute {
   @IsNotEmpty()
   @IsInt()
   @Min(1)
-  distanceKM: number;
+  distance_km: number;
 }
