@@ -21,8 +21,8 @@ import { CacheLoggingInterceptor } from 'src/common/interceptors/cache-logging.i
 export class FlightController {
   constructor(private flightService: FlightService) {}
 
-  // @UseInterceptors(CacheLoggingInterceptor)
-  // @CacheTTL(60_000)
+  @UseInterceptors(CacheLoggingInterceptor)
+  @CacheTTL(60_000)
   @Get()
   getFlights(@Query() query: GetFlightsQueryDto) {
     return this.flightService.getAllFlights(query);
