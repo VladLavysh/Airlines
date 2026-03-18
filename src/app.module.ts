@@ -12,6 +12,8 @@ import { RouteModule } from './route/route.module';
 import { SeatModule } from './seat/seat.module';
 import { SeatClassModule } from './seat-class/seat-class.module';
 import { FlightModule } from './flight/flight.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -61,6 +63,8 @@ import { FlightModule } from './flight/flight.module';
     SeatClassModule,
     SeatModule,
     FlightModule,
+    UserModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

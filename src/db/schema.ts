@@ -45,6 +45,7 @@ export const seat_class = pgTable(
     price_multiplier: decimal('price_multiplier', { precision: 4, scale: 2 }).notNull(),
   }
 );
+
 export const seat = pgTable(
   'seat',
   {
@@ -136,5 +137,45 @@ export const flightRelations = relations(flight, ({ one }) => ({
   airline: one(airline, {
     fields: [flight.airline_id],
     references: [airline.id],
+  }),
+}));
+
+export const user = pgTable(
+  'user',
+  {
+    id: serial('id').primaryKey(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    role: varchar('role', { length: 16 }).notNull(),
+    first_name: varchar('first_name', { length: 64 }).notNull(),
+    last_name: varchar('last_name', { length: 64 }).notNull(),
+    password: varchar('password', { length: 255 }).notNull(),
+    deleted_at: timestamp('deleted_at')
+  }
+);
+// export const userRelations = relations(user, ({ many }) => ({
+//   bookings: many(booking),
+// }));
+
+export const refresh_token = pgTable(
+  'refresh_token',
+  {
+    id: serial('id').primaryKey(),
+    token: varchar('token', { length: 500 }).notNull().unique(),
+    user_id: integer('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+      }),
+    expires_at: timestamp('expires_at').notNull(),
+    created_at: timestamp('created_at').notNull().defaultNow(),
+    revoked_at: timestamp('revoked_at'),
+  },
+  (table) => [index('refresh_token_token_idx').on(table.token), index('refresh_token_user_id_idx').on(table.user_id)],
+);
+export const refreshTokenRelations = relations(refresh_token, ({ one }) => ({
+  user: one(user, {
+    fields: [refresh_token.user_id],
+    references: [user.id],
   }),
 }));

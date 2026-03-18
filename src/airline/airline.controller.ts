@@ -9,6 +9,7 @@ import {
   Body,
   Patch,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { AirlineService } from './airline.service';
 import { GetAirlinesQueryDto } from './dto/get-airlines.dto';
@@ -16,8 +17,14 @@ import { PatchAirlineDto } from './dto/patch-airline.dto';
 import { CreateAirlineDto } from './dto/create-airline.dto';
 import { CacheTTL } from '@nestjs/cache-manager';
 import { CacheLoggingInterceptor } from 'src/common/interceptors/cache-logging.interceptor';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/user/types/user.interface';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('airline')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
 export class AirlineController {
   constructor(private airlineService: AirlineService) {}
 
