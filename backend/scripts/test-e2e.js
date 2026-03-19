@@ -87,7 +87,7 @@ async function main() {
   let exitCode = 0;
 
   try {
-    run('docker compose --profile test up -d db_test redis_test');
+    run('docker compose -f ../docker-compose.yml --profile test up -d db_test redis_test');
 
     await waitForService(
       'Postgres',
@@ -108,7 +108,7 @@ async function main() {
     exitCode = error.exitCode || 1;
   } finally {
     const cleanup = spawnSync(
-      'docker compose --profile test rm -sf db_test redis_test',
+      'docker compose -f ../docker-compose.yml --profile test rm -sf db_test redis_test',
       {
         stdio: 'inherit',
         shell: true,

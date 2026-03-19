@@ -1,10 +1,14 @@
 # compiled output
-/dist
-/node_modules
-/build
-/docs
-postman
-.postman
+backend/dist
+frontend/dist
+/backend/node_modules
+/frontend/node_modules
+/backend/build
+/frontend/build
+/backend/docs
+/frontend/docs
+/backend/postman
+/backend/.postman
 .windsurf
 
 # Logs
@@ -20,8 +24,8 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
-/coverage
-/.nyc_output
+/backend/coverage
+.nyc_output
 
 # IDEs and editors
 /.idea
