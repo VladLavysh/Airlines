@@ -3,6 +3,7 @@ export const AIRCRAFT_ORDER_BY_FIELDS = [
   'registration_number',
   'manufacturer',
   'year',
+  'price_multiplier',
   'airline_id',
 ] as const;
 export type AircraftOrderByField = (typeof AIRCRAFT_ORDER_BY_FIELDS)[number];
@@ -19,5 +20,6 @@ interface IEntityFields {
   registration_number?: string;
   manufacturer?: string;
   year?: number;
+  price_multiplier?: string;
   airline_id?: number;
 }

@@ -5,6 +5,7 @@ export interface IAircraft {
   registration_number: string;
   manufacturer: string;
   year: number;
+  price_multiplier: string | number;
   airline_id: number;
   seats: IAircraftSeat[]
 }

@@ -1,4 +1,4 @@
-export const AIRLINE_ORDER_BY_FIELDS = ['name', 'iata_code', 'country'] as const;
+export const AIRLINE_ORDER_BY_FIELDS = ['name', 'iata_code', 'country', 'price_multiplier'] as const;
 export type AirlineOrderByField = (typeof AIRLINE_ORDER_BY_FIELDS)[number];
 
 export interface IGetAllAirlines extends IEntityFields {
@@ -12,4 +12,5 @@ interface IEntityFields {
   name?: string;
   iata_code?: string;
   country?: string;
+  price_multiplier?: string;
 }

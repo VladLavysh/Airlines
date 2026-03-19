@@ -46,18 +46,24 @@ export class RouteRepository {
   }
 
   async createOne(data: IRoute) {
-    const { departure_airport, arrival_airport, distance_km } = data;
+    const { departure_airport, arrival_airport, distance_km, base_price } = data;
     
     return this.db
       .insert(route)
-      .values({ departure_airport, arrival_airport, distance_km })
+      .values({ departure_airport, arrival_airport, distance: distance_km, base_price: base_price.toString() })
       .returning();
   }
 
   async updateOneById(id: number, data: Partial<IRoute>) {
+    const updateData: Record<string, any> = {};
+    if (data.departure_airport !== undefined) updateData.departure_airport = data.departure_airport;
+    if (data.arrival_airport !== undefined) updateData.arrival_airport = data.arrival_airport;
+    if (data.distance_km !== undefined) updateData.distance = data.distance_km;
+    if (data.base_price !== undefined) updateData.base_price = data.base_price.toString();
+
     return this.db
       .update(route)
-      .set(data)
+      .set(updateData)
       .where(eq(route.id, id))
       .returning();
   }

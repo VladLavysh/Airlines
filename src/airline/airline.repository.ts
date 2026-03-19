@@ -17,12 +17,14 @@ export class AirlineRepository {
       name,
       iata_code,
       country,
+      price_multiplier,
     } = data;
 
     const filters = [
       name && ilike(airline.name, `%${name}%`),
       iata_code && eq(airline.iata_code, iata_code),
       country && ilike(airline.country, `%${country}%`),
+      price_multiplier && eq(airline.price_multiplier, price_multiplier),
     ].filter(Boolean) as SQL[];
 
     const orderColumn = airline[order_by];
@@ -45,17 +47,22 @@ export class AirlineRepository {
       .limit(1);
   }
 
-  async createOne(name: string, iata_code: string, country: string) {
+  async createOne(name: string, iata_code: string, country: string, price_multiplier: number) {
     return this.db
       .insert(airline)
-      .values({ name, iata_code, country })
+      .values({ name, iata_code, country, price_multiplier: price_multiplier.toString() })
       .returning();
   }
 
   async updateOneById(id: number, data: Partial<IAirline>) {
+    const updateData = { ...data };
+    if (updateData.price_multiplier !== undefined) {
+      updateData.price_multiplier = updateData.price_multiplier.toString();
+    }
+
     return this.db
       .update(airline)
-      .set(data)
+      .set(updateData)
       .where(eq(airline.id, id))
       .returning();
   }

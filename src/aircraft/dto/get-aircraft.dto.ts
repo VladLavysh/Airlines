@@ -59,6 +59,10 @@ export class GetAircraftQueryDto implements IGetAllAircraft {
   year?: number;
 
   @IsOptional()
+  @IsString()
+  price_multiplier?: string;
+
+  @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   airline_id?: number;

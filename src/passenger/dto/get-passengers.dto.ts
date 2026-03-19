@@ -1,16 +1,8 @@
-import {
-  IsInt,
-  Min,
-  Max,
-  IsOptional,
-  IsString,
-  IsNotEmpty,
-  MaxLength,
-  IsIn } from 'class-validator';
+import { IsInt, Min, Max, IsOptional, IsString, IsNotEmpty, MaxLength, IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IGetAllAirlines, AIRLINE_ORDER_BY_FIELDS } from 'src/airline/types/get-all-airlines.interface';
+import { IGetAllPassengers, PASSENGER_ORDER_BY_FIELDS } from 'src/passenger/types/get-all-passengers.interface';
 
-export class GetAirlinesQueryDto implements IGetAllAirlines {
+export class GetPassengersQueryDto implements IGetAllPassengers {
   @Transform(({ value }) => parseInt(value, 10))
   @IsInt()
   @Min(1)
@@ -24,8 +16,8 @@ export class GetAirlinesQueryDto implements IGetAllAirlines {
 
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()
-  @IsIn(AIRLINE_ORDER_BY_FIELDS)
-  order_by: (typeof AIRLINE_ORDER_BY_FIELDS)[number] = 'name';
+  @IsIn(PASSENGER_ORDER_BY_FIELDS)
+  order_by: (typeof PASSENGER_ORDER_BY_FIELDS)[number] = 'created_at';
 
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()
@@ -35,19 +27,15 @@ export class GetAirlinesQueryDto implements IGetAllAirlines {
   @IsOptional()
   @IsString()
   @MaxLength(64)
-  name?: string;
+  first_name?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(3)
-  iata_code?: string;
+  @MaxLength(64)
+  last_name?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(32)
-  country?: string;
-
-  @IsOptional()
-  @IsString()
-  price_multiplier?: string;
+  @MaxLength(20)
+  passport_number?: string;
 }

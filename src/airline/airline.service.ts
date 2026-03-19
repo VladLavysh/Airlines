@@ -16,9 +16,9 @@ export class AirlineService {
   }
 
   createAirline(data: IAirline) {
-    const { name, iata_code, country } = data;
+    const { name, iata_code, country, price_multiplier } = data;
 
-    return this.repo.createOne(name, iata_code, country);
+    return this.repo.createOne(name, iata_code, country, Number(price_multiplier));
   }
 
   async updateAirlineById(id: number, data: Partial<IAirline>) {

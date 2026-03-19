@@ -14,6 +14,9 @@ import { SeatClassModule } from './seat-class/seat-class.module';
 import { FlightModule } from './flight/flight.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { PassengerModule } from './passenger/passenger.module';
+import { BookingModule } from './booking/booking.module';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
   imports: [
@@ -65,6 +68,9 @@ import { AuthModule } from './auth/auth.module';
     FlightModule,
     UserModule,
     AuthModule,
+    PassengerModule,
+    BookingModule,
+    TicketModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,5 @@
-import { IsOptional, IsString, MaxLength, IsInt, Min } from 'class-validator';
+import { IsOptional, IsString, MaxLength, IsInt, Min, IsNumber, IsPositive } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { IRoute } from 'src/route/types/route.interface';
 
 export class PatchRouteDto implements Partial<IRoute> {
@@ -16,4 +17,10 @@ export class PatchRouteDto implements Partial<IRoute> {
   @IsInt()
   @Min(1)
   distance_km?: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  base_price?: number;
 }

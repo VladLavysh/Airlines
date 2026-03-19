@@ -18,6 +18,7 @@ export class AircraftRepository {
       registration_number,
       manufacturer,
       year,
+      price_multiplier,
       airline_id
     } = data;
 
@@ -26,6 +27,7 @@ export class AircraftRepository {
       registration_number && eq(aircraft.registration_number, registration_number),
       manufacturer && ilike(aircraft.manufacturer, `%${manufacturer}%`),
       year && eq(aircraft.year, year),
+      price_multiplier && eq(aircraft.price_multiplier, price_multiplier),
       airline_id && eq(aircraft.airline_id, airline_id),
     ].filter(Boolean) as SQL[];
 
@@ -48,6 +50,7 @@ export class AircraftRepository {
         registration_number: aircraft.registration_number,
         manufacturer: aircraft.manufacturer,
         year: aircraft.year,
+        price_multiplier: aircraft.price_multiplier,
         airline_id: aircraft.airline_id,
         total_seats: sql<number>`COALESCE(${seatCountSubquery.total_seats}, 0)::integer`
       })
@@ -80,20 +83,24 @@ export class AircraftRepository {
 
   async createOne(data: Omit<IAircraft, 'seats'>, tx?: any) {
     const dbClient = tx || this.db
-    const { name, registration_number, manufacturer, year, airline_id } = data;
+    const { name, registration_number, manufacturer, year, price_multiplier, airline_id } = data;
 
     return dbClient
       .insert(aircraft)
-      .values({ name, registration_number, manufacturer, year, airline_id })
+      .values({ name, registration_number, manufacturer, year, price_multiplier: price_multiplier.toString(), airline_id })
       .returning();
   }
 
   async updateOneById(id: number, data: Partial<IAircraft>, tx?: any) {
     const dbClient = tx || this.db;
-    
+    const updateData = { ...data };
+    if (updateData.price_multiplier !== undefined) {
+      updateData.price_multiplier = updateData.price_multiplier.toString();
+    }
+
     return dbClient
       .update(aircraft)
-      .set(data)
+      .set(updateData)
       .where(eq(aircraft.id, id))
       .returning();
   }

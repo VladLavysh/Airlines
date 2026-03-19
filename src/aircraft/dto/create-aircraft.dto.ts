@@ -6,8 +6,12 @@ import {
   Min,
   Max,
   IsArray,
-  ArrayNotEmpty
+  ArrayNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsOptional,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import type { IAircraft } from 'src/aircraft/types/aircraft.interface';
 import type { IAircraftSeat } from 'src/seat/types/seat.interface';
 import IsValidSeats from 'src/aircraft/validators/is-valid-seats.validator';
@@ -33,6 +37,12 @@ export class CreateAircraftDto implements IAircraft {
   @Min(1900)
   @Max(2030)
   year: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  price_multiplier: number = 1.00;
 
   @IsNotEmpty()
   @IsArray()

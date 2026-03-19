@@ -44,9 +44,7 @@ export class AirlineController {
 
   @Post()
   createAirline(@Body() body: CreateAirlineDto) {
-    const { name, iata_code, country } = body;
-
-    return this.airlineService.createAirline({ name, iata_code, country });
+    return this.airlineService.createAirline(body);
   }
 
   @Patch(':id')

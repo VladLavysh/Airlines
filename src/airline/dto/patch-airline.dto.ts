@@ -1,4 +1,5 @@
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, IsNumber, IsPositive } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { IAirline } from 'src/airline/types/airline.interface';
 
 export class PatchAirlineDto implements Partial<IAirline> {
@@ -16,4 +17,10 @@ export class PatchAirlineDto implements Partial<IAirline> {
   @IsString()
   @MaxLength(32)
   country?: string;
+
+  @Transform(({ value }) => parseFloat(value))
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  price_multiplier?: number;
 }

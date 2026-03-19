@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString, MaxLength, IsInt, Min } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, IsInt, Min, IsNumber, IsPositive } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { IRoute } from 'src/route/types/route.interface';
 
 export class CreateRouteDto implements IRoute {
@@ -16,4 +17,10 @@ export class CreateRouteDto implements IRoute {
   @IsInt()
   @Min(1)
   distance_km: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  @IsNotEmpty()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  base_price: number;
 }

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { flight } from 'src/db/schema';
-import { eq, ilike, SQL, asc, desc, and, gte, lte } from 'drizzle-orm';
+import { flight, seat, seat_class } from 'src/db/schema';
+import { eq, ilike, SQL, asc, desc, and, gte, lte, sql, min, max } from 'drizzle-orm';
 import { IGetAllFlights } from './types/get-all-flights.interface';
 import { IFlight } from './types/flight.interface';
 
@@ -32,7 +32,6 @@ export class FlightRepository {
       where: filters.length > 0 ? and(...filters) : undefined,
       columns: {
         route_id: false,
-        aircraft_id: false,
         airline_id: false
       },
       with: {
@@ -64,7 +63,6 @@ export class FlightRepository {
       where: eq(flight.id, id),
       columns: {
         route_id: false,
-        aircraft_id: false,
         airline_id: false
       },
       with: {
@@ -86,6 +84,19 @@ export class FlightRepository {
         },
       }
     })
+  }
+
+  async getSeatClassMultiplierRange(aircraftId: number) {
+    const [result] = await this.db
+      .select({
+        min_multiplier: min(seat_class.price_multiplier),
+        max_multiplier: max(seat_class.price_multiplier),
+      })
+      .from(seat)
+      .innerJoin(seat_class, eq(seat.seat_class_id, seat_class.id))
+      .where(eq(seat.aircraft_id, aircraftId));
+
+    return result;
   }
 
   async createOne(data: IFlight) {
