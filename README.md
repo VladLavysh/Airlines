@@ -1,26 +1,45 @@
-# Airlines API
+# Airlines Application
 
-A comprehensive REST API for searching and managing flights and airline data built with NestJS.
+A full-stack flight booking and management system with a NestJS backend API and Nuxt.js frontend.
 
 ## Description
 
-The Airlines API provides a robust backend solution for flight search and management operations. This service offers endpoints for:
+The Airlines Application is a comprehensive flight booking platform that provides:
 
+**Backend API:**
 - **Airline Management**: Search, create, update, and manage airline information
 - **Flight Operations**: Manage flight schedules, routes, and availability
 - **Aircraft Management**: Track and manage aircraft fleet information
 - **Seat Management**: Handle seat configurations and availability
-- **Authentication & Security**: JWT-based authentication with role-based access control
+- **Booking System**: Create and manage flight bookings
+- **Authentication & Security**: JWT-based authentication with role-based access control (user/admin)
+
+**Frontend Application:**
+- Modern, responsive UI built with Vue 3 and Nuxt 4
+- Flight search and booking interface
+- User authentication and profile management
+- Admin dashboard for managing flights, airlines, and bookings
+- Real-time booking status updates
 
 ## Technology Stack
 
+### Backend
 - **Framework**: NestJS with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
 - **Caching**: Redis for performance optimization
-- **Authentication**: JWT with Passport
-- **Documentation**: Swagger/OpenAPI
-- **Security**: Helmet, rate limiting, and input validation
+- **Authentication**: JWT with Passport (Local & JWT strategies)
+- **API Documentation**: Swagger/OpenAPI
+- **Security**: Helmet, CORS, rate limiting, and input validation
 - **Logging**: Pino for structured logging
+- **Containerization**: Docker with health checks
+
+### Frontend
+- **Framework**: Nuxt 4 (Vue 3) with TypeScript
+- **UI Library**: Nuxt UI (Radix Vue components)
+- **State Management**: Pinia
+- **Styling**: TailwindCSS
+- **Icons**: Lucide Icons
+- **Rendering**: Client-side rendering (CSR)
 
 ## Features
 
@@ -37,10 +56,10 @@ The Airlines API provides a robust backend solution for flight search and manage
 ## Quick Start
 
 ### Prerequisites
-- Node.js (v18 or higher)
+- Node.js (v22 or higher)
 - Docker & Docker Compose
-- PostgreSQL (if running locally)
-- Redis (if running locally)
+- PostgreSQL (if running backend locally without Docker)
+- Redis (if running backend locally without Docker)
 
 ### Installation
 
@@ -49,25 +68,42 @@ The Airlines API provides a robust backend solution for flight search and manage
 git clone <repository-url>
 cd airlines
 
-# Install dependencies
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../frontend
 npm install
 ```
 
 ### Running the Application
 
-#### Option 1: Docker Compose (Recommended)
+#### Backend (Docker - Recommended)
+
 ```bash
-# Start all services with hot reload
+# From the backend directory
+cd backend
+
+# Start backend with Docker (includes PostgreSQL & Redis)
 npm run start:container
 ```
 
 This will start:
-- **API Server** on port 3000
-- **PostgreSQL** database with health checks
-- **Redis** cache with health checks
+- **API Server** on port 3000 (http://localhost:3000)
+- **PostgreSQL** database on port 5432 with health checks
+- **Redis** cache on port 6379 with health checks
+- **Swagger API Docs** at http://localhost:3000/api/v1/docs
 
-#### Option 2: Local Development
+#### Backend (Local Development)
+
 ```bash
+# From the backend directory
+cd backend
+
+# Make sure PostgreSQL and Redis are running locally
+# Update backend/.env with local connection details
+
 # Development mode with hot reload
 npm run start:dev
 
@@ -75,10 +111,30 @@ npm run start:dev
 npm run start:prod
 ```
 
+#### Frontend
+
+The frontend runs separately and is **not containerized**:
+
+```bash
+# From the frontend directory
+cd frontend
+
+# Start development server
+npm run dev
+```
+
+The frontend will be available at http://localhost:3002 (or next available port).
+
+**Note**: Make sure the backend is running before starting the frontend. The frontend connects to the backend API at `http://localhost:3000/api/v1`.
+
 ### Database Management
+
+All database commands should be run from the `backend/` directory.
 
 #### When using Docker (recommended)
 ```bash
+cd backend
+
 # Generate database migrations
 npm run db:generate
 
@@ -91,6 +147,8 @@ npm run db:push
 
 #### When running locally (without Docker)
 ```bash
+cd backend
+
 # Generate database migrations
 npm run db:generate:local
 
@@ -105,12 +163,13 @@ npm run db:push:local
 
 ## Testing
 
+All tests are located in the backend. Run from the `backend/` directory:
+
 ```bash
+cd backend
+
 # Run unit tests
 npm run test
-
-# Run tests in watch mode
-npm run test:watch
 
 # Run test coverage
 npm run test:cov
@@ -119,18 +178,19 @@ npm run test:cov
 npm run test:e2e
 ```
 
-### Local e2e notes
+### E2E Testing Notes
 
-- Copy `.env.test.example` to `.env.test` if you need custom local test values.
-- `npm run test:e2e` now starts isolated test dependencies (`db_test` on `5433` and `redis_test` on `6380`), waits for readiness, runs migrations, and then executes only `*.e2e-spec.ts` tests.
-- CI remains unchanged and can continue to run migrations/tests with CI-provided environment variables.
+- Copy `backend/.env.test.example` to `backend/.env.test` if you need custom local test values.
+- `npm run test:e2e` automatically starts isolated test dependencies (`db_test` on port `5433` and `redis_test` on port `6380`), waits for readiness, runs migrations, and then executes only `*.e2e-spec.ts` tests.
+- Test containers are automatically cleaned up after tests complete.
+- CI workflows run migrations and tests with CI-provided environment variables.
 
 ## API Documentation
 
-Once the application is running, you can access the interactive API documentation:
+Once the backend is running, you can access the interactive API documentation:
 
-- **Swagger UI**: http://localhost:3000/docs
-- **OpenAPI JSON**: http://localhost:3000/docs-json
+- **Swagger UI**: http://localhost:3000/api/v1/docs
+- **OpenAPI JSON**: http://localhost:3000/api/v1/docs-json
 
 The documentation includes:
 - Detailed endpoint descriptions
@@ -138,19 +198,63 @@ The documentation includes:
 - Authentication requirements
 - Interactive testing interface
 
+## Application URLs
+
+- **Frontend**: http://localhost:3002 (or next available port)
+- **Backend API**: http://localhost:3000/api/v1
+- **API Documentation**: http://localhost:3000/api/v1/docs
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+
 ## Project Structure
 
 ```
-src/
-├── airline/           # Airline-related modules
-│   ├── airline.controller.ts
-│   ├── airline.service.ts
-│   └── airline.repository.ts
-├── auth/              # Authentication modules
-├── config/            # Configuration files
-├── database/          # Database connection and schema
-├── common/            # Shared utilities and decorators
-└── main.ts            # Application entry point
+airlines/
+├── backend/                    # NestJS Backend API
+│   ├── src/
+│   │   ├── airline/           # Airline management
+│   │   ├── aircraft/          # Aircraft management
+│   │   ├── auth/              # Authentication & authorization
+│   │   ├── booking/           # Booking system
+│   │   ├── flight/            # Flight operations
+│   │   ├── passenger/         # Passenger management
+│   │   ├── route/             # Route management
+│   │   ├── seat/              # Seat management
+│   │   ├── seat-class/        # Seat class configuration
+│   │   ├── ticket/            # Ticket management
+│   │   ├── user/              # User management
+│   │   ├── common/            # Shared utilities
+│   │   ├── config/            # Configuration
+│   │   ├── db/                # Database schema & connection
+│   │   └── main.ts            # Application entry point
+│   ├── drizzle/               # Database migrations
+│   ├── test/                  # E2E tests
+│   ├── scripts/               # Utility scripts
+│   ├── .env.example           # Environment variables template
+│   ├── Dockerfile             # Backend container definition
+│   └── package.json           # Backend dependencies
+│
+├── frontend/                   # Nuxt.js Frontend
+│   ├── app/
+│   │   ├── pages/             # Application pages/routes
+│   │   │   ├── admin/         # Admin dashboard pages
+│   │   │   ├── bookings/      # Booking pages
+│   │   │   ├── flights/       # Flight search & details
+│   │   │   ├── index.vue      # Home page
+│   │   │   ├── login.vue      # Login page
+│   │   │   ├── register.vue   # Registration page
+│   │   │   └── profile.vue    # User profile
+│   │   ├── layouts/           # Page layouts
+│   │   ├── stores/            # Pinia state stores
+│   │   ├── composables/       # Vue composables
+│   │   ├── middleware/        # Route middleware
+│   │   └── assets/            # Static assets
+│   ├── nuxt.config.ts         # Nuxt configuration
+│   └── package.json           # Frontend dependencies
+│
+├── docker-compose.yml          # Docker orchestration (backend only)
+├── .github/workflows/          # CI/CD workflows
+└── README.md                   # This file
 ```
 
 ## Contributing
