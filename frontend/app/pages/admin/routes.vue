@@ -28,18 +28,22 @@
             <h3 class="text-lg font-semibold">{{ editing ? 'Edit' : 'Create' }} Route</h3>
           </template>
           <form @submit.prevent="save" class="space-y-4">
-            <UFormField label="Departure Airport">
-              <UInput v-model="form.departure_airport" required />
-            </UFormField>
-            <UFormField label="Arrival Airport">
-              <UInput v-model="form.arrival_airport" required />
-            </UFormField>
-            <UFormField label="Distance (km)">
-              <UInput v-model.number="form.distance_km" type="number" min="1" required />
-            </UFormField>
-            <UFormField label="Base Price">
-              <UInput v-model.number="form.base_price" type="number" step="0.01" min="0.01" required />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Departure Airport">
+                <UInput v-model="form.departure_airport" required />
+              </UFormField>
+              <UFormField label="Arrival Airport">
+                <UInput v-model="form.arrival_airport" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Distance (km)">
+                <UInput v-model.number="form.distance_km" type="number" min="1" required />
+              </UFormField>
+              <UFormField label="Base Price">
+                <UInput v-model.number="form.base_price" type="number" step="0.01" min="0.01" required />
+              </UFormField>
+            </div>
             <p v-if="formError" class="text-sm text-red-500">{{ formError }}</p>
             <UButton type="submit" color="primary" block :loading="saving">{{ editing ? 'Update' : 'Create' }}</UButton>
           </form>
@@ -106,9 +110,10 @@ async function save() {
     } else {
       await api('/route', { method: 'POST', body: { ...form } });
       toast.add({ title: 'Route created', color: 'success' });
+      pagination.offset = 0;
     }
     showForm.value = false;
-    fetchItems();
+    await fetchItems();
   } catch (e: any) {
     formError.value = e?.data?.message || 'Failed to save';
   } finally { saving.value = false; }

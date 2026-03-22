@@ -28,27 +28,33 @@
             <h3 class="text-lg font-semibold">{{ editing ? 'Edit' : 'Create' }} Aircraft</h3>
           </template>
           <form @submit.prevent="save" class="space-y-4">
-            <UFormField label="Name">
-              <UInput v-model="form.name" required />
-            </UFormField>
-            <UFormField label="Registration Number">
-              <UInput v-model="form.registration_number" required />
-            </UFormField>
-            <UFormField label="Manufacturer">
-              <UInput v-model="form.manufacturer" required />
-            </UFormField>
-            <UFormField label="Year">
-              <UInput v-model.number="form.year" type="number" min="1900" max="2030" required />
-            </UFormField>
-            <UFormField label="Price Multiplier">
-              <UInput v-model.number="form.price_multiplier" type="number" step="0.01" min="0.01" required />
-            </UFormField>
-            <UFormField label="Airline ID">
-              <UInput v-model.number="form.airline_id" type="number" min="1" required />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Name">
+                <UInput v-model="form.name" required />
+              </UFormField>
+              <UFormField label="Registration Number">
+                <UInput v-model="form.registration_number" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Manufacturer">
+                <UInput v-model="form.manufacturer" required />
+              </UFormField>
+              <UFormField label="Year">
+                <UInput v-model.number="form.year" type="number" min="1900" max="2030" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Price Multiplier">
+                <UInput v-model.number="form.price_multiplier" type="number" step="0.01" min="0.01" required />
+              </UFormField>
+              <UFormField label="Airline ID">
+                <UInput v-model.number="form.airline_id" type="number" min="1" required />
+              </UFormField>
+            </div>
             <template v-if="!editing">
               <h4 class="font-medium">Seats (JSON array)</h4>
-              <UTextarea v-model="seatsJson" placeholder='[{"seat_number":"1A","seat_class_id":1}]' rows="3" />
+              <UTextarea v-model="seatsJson" placeholder='[{"seat_number":"1A","seat_class_id":1}]' :rows="3" />
             </template>
             <p v-if="formError" class="text-sm text-red-500">{{ formError }}</p>
             <UButton type="submit" color="primary" block :loading="saving">{{ editing ? 'Update' : 'Create' }}</UButton>
@@ -82,7 +88,7 @@ const showForm = ref(false);
 const saving = ref(false);
 const editing = ref<number | null>(null);
 const formError = ref('');
-const seatsJson = ref('[]');
+const seatsJson = ref<string>('[]');
 const pagination = reactive({ limit: 10, offset: 0 });
 
 const form = reactive({
@@ -129,9 +135,10 @@ async function save() {
       try { seats = JSON.parse(seatsJson.value); } catch { formError.value = 'Invalid seats JSON'; saving.value = false; return; }
       await api('/aircraft', { method: 'POST', body: { ...form, seats } });
       toast.add({ title: 'Aircraft created', color: 'success' });
+      pagination.offset = 0;
     }
     showForm.value = false;
-    fetchItems();
+    await fetchItems();
   } catch (e: any) {
     formError.value = e?.data?.message || 'Failed to save';
   } finally { saving.value = false; }

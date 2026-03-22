@@ -5,12 +5,12 @@ import { IRoute } from 'src/route/types/route.interface';
 export class CreateRouteDto implements IRoute {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(32)
+  @MaxLength(3)
   departure_airport: string;
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(32)
+  @MaxLength(3)
   arrival_airport: string;
 
   @IsNotEmpty()

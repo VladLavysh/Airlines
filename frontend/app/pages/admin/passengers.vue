@@ -36,18 +36,22 @@
                 <UInput v-model="form.last_name" required />
               </UFormField>
             </div>
-            <UFormField label="Passport Number">
-              <UInput v-model="form.passport_number" required />
-            </UFormField>
-            <UFormField label="Email">
-              <UInput v-model="form.email" type="email" required />
-            </UFormField>
-            <UFormField label="Phone (optional)">
-              <UInput v-model="form.phone" />
-            </UFormField>
-            <UFormField label="Date of Birth">
-              <UInput v-model="form.date_of_birth" type="date" required />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Passport Number">
+                <UInput v-model="form.passport_number" required />
+              </UFormField>
+              <UFormField label="Email">
+                <UInput v-model="form.email" type="email" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Phone (optional)">
+                <UInput v-model="form.phone" />
+              </UFormField>
+              <UFormField label="Date of Birth">
+                <UInput v-model="form.date_of_birth" type="date" required />
+              </UFormField>
+            </div>
             <p v-if="formError" class="text-sm text-red-500">{{ formError }}</p>
             <UButton type="submit" color="primary" block :loading="saving">{{ editing ? 'Update' : 'Create' }}</UButton>
           </form>
@@ -69,7 +73,10 @@ const columns = [
   { accessorKey: 'last_name', header: 'Last Name' },
   { accessorKey: 'passport_number', header: 'Passport' },
   { accessorKey: 'email', header: 'Email' },
-  { accessorKey: 'date_of_birth', header: 'DOB' },
+  { accessorKey: 'date_of_birth', header: 'DOB', accessorFn: (row: any) => {
+    const d = new Date(row.date_of_birth);
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  } },
   { accessorKey: 'actions', header: '' },
 ];
 
@@ -124,9 +131,10 @@ async function save() {
     } else {
       await api('/passenger', { method: 'POST', body });
       toast.add({ title: 'Passenger created', color: 'success' });
+      pagination.offset = 0;
     }
     showForm.value = false;
-    fetchItems();
+    await fetchItems();
   } catch (e: any) {
     formError.value = e?.data?.message || 'Failed to save';
   } finally { saving.value = false; }

@@ -8,32 +8,48 @@
       <form @submit.prevent="handleRegister" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <UFormGroup label="First Name" name="first_name">
-            <UInput v-model="form.first_name" placeholder="John" required />
+            <UInput
+              v-model="form.first_name"
+              placeholder="John"
+              icon="i-lucide-user"
+              size="lg"
+              required
+            />
           </UFormGroup>
           <UFormGroup label="Last Name" name="last_name">
-            <UInput v-model="form.last_name" placeholder="Doe" required />
+            <UInput
+              v-model="form.last_name"
+              placeholder="Doe"
+              icon="i-lucide-user"
+              size="lg"
+              required
+            />
           </UFormGroup>
         </div>
 
-        <UFormGroup label="Email" name="email">
-          <UInput
-            v-model="form.email"
-            type="email"
-            placeholder="you@example.com"
-            icon="i-lucide-mail"
-            required
-          />
-        </UFormGroup>
+        <div class="grid grid-cols-2 gap-4">
+          <UFormGroup label="Email" name="email">
+            <UInput
+              v-model="form.email"
+              type="email"
+              placeholder="you@example.com"
+              icon="i-lucide-mail"
+              size="lg"
+              required
+            />
+          </UFormGroup>
 
-        <UFormGroup label="Password" name="password" hint="Min 8 chars, uppercase, lowercase, number, special char">
-          <UInput
-            v-model="form.password"
-            type="password"
-            placeholder="Strong password"
-            icon="i-lucide-lock"
-            required
-          />
-        </UFormGroup>
+          <UFormGroup label="Password" name="password" hint="Min 8 chars, uppercase, lowercase, number, special char">
+            <UInput
+              v-model="form.password"
+              type="password"
+              placeholder="Strong password"
+              icon="i-lucide-lock"
+              size="lg"
+              required
+            />
+          </UFormGroup>
+        </div>
 
         <UButton type="submit" color="primary" block :loading="loading">
           Register

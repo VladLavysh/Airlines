@@ -8,6 +8,7 @@ import {
   Body,
   Patch,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -44,6 +45,17 @@ export class UserController {
   }
 
   // Admin-only routes
+  @Roles(UserRole.ADMIN)
+  @Get()
+  getAllUsers(
+    @Query('limit', ParseIntPipe) limit: number = 10,
+    @Query('offset', ParseIntPipe) offset: number = 0,
+    @Query('order_by') order_by?: string,
+    @Query('order') order?: 'asc' | 'desc',
+  ) {
+    return this.userService.findAll({ limit, offset, order_by, order });
+  }
+
   @Roles(UserRole.ADMIN)
   @Get(':id')
   getUser(@Param('id', ParseIntPipe) id: number) {

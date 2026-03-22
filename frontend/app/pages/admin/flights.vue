@@ -33,24 +33,30 @@
             <h3 class="text-lg font-semibold">{{ editing ? 'Edit' : 'Create' }} Flight</h3>
           </template>
           <form @submit.prevent="save" class="space-y-4">
-            <UFormField label="Departure Time">
-              <UInput v-model="form.departure_time" type="datetime-local" required />
-            </UFormField>
-            <UFormField label="Arrival Time">
-              <UInput v-model="form.arrival_time" type="datetime-local" required />
-            </UFormField>
-            <UFormField label="Status">
-              <USelect v-model="form.flight_status" :items="statusOptions" required />
-            </UFormField>
-            <UFormField label="Route ID">
-              <UInput v-model.number="form.route_id" type="number" min="1" required />
-            </UFormField>
-            <UFormField label="Aircraft ID">
-              <UInput v-model.number="form.aircraft_id" type="number" min="1" required />
-            </UFormField>
-            <UFormField label="Airline ID">
-              <UInput v-model.number="form.airline_id" type="number" min="1" required />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Departure Time">
+                <UInput v-model="form.departure_time" type="datetime-local" required />
+              </UFormField>
+              <UFormField label="Arrival Time">
+                <UInput v-model="form.arrival_time" type="datetime-local" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Status">
+                <USelect v-model="form.flight_status" :items="statusOptions" required />
+              </UFormField>
+              <UFormField label="Route ID">
+                <UInput v-model.number="form.route_id" type="number" min="1" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Aircraft ID">
+                <UInput v-model.number="form.aircraft_id" type="number" min="1" required />
+              </UFormField>
+              <UFormField label="Airline ID">
+                <UInput v-model.number="form.airline_id" type="number" min="1" required />
+              </UFormField>
+            </div>
             <p v-if="formError" class="text-sm text-red-500">{{ formError }}</p>
             <UButton type="submit" color="primary" block :loading="saving">{{ editing ? 'Update' : 'Create' }}</UButton>
           </form>
@@ -98,7 +104,13 @@ const form = reactive({
 });
 
 function formatDT(d: string) {
-  return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const date = new Date(d);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
 function statusColor(status: string) {
@@ -153,9 +165,10 @@ async function save() {
     } else {
       await api('/flight', { method: 'POST', body });
       toast.add({ title: 'Flight created', color: 'success' });
+      pagination.offset = 0;
     }
     showForm.value = false;
-    fetchItems();
+    await fetchItems();
   } catch (e: any) {
     formError.value = e?.data?.message || 'Failed to save';
   } finally { saving.value = false; }

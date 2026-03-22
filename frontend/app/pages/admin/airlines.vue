@@ -28,18 +28,22 @@
             <h3 class="text-lg font-semibold">{{ editing ? 'Edit' : 'Create' }} Airline</h3>
           </template>
           <form @submit.prevent="save" class="space-y-4">
-            <UFormField label="Name">
-              <UInput v-model="form.name" required />
-            </UFormField>
-            <UFormField label="IATA Code">
-              <UInput v-model="form.iata_code" maxlength="3" required />
-            </UFormField>
-            <UFormField label="Country">
-              <UInput v-model="form.country" required />
-            </UFormField>
-            <UFormField label="Price Multiplier">
-              <UInput v-model.number="form.price_multiplier" type="number" step="0.01" min="0.01" required />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Name">
+                <UInput v-model="form.name" required />
+              </UFormField>
+              <UFormField label="IATA Code">
+                <UInput v-model="form.iata_code" maxlength="3" required />
+              </UFormField>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Country">
+                <UInput v-model="form.country" required />
+              </UFormField>
+              <UFormField label="Price Multiplier">
+                <UInput v-model.number="form.price_multiplier" type="number" step="0.01" min="0.01" required />
+              </UFormField>
+            </div>
             <p v-if="formError" class="text-sm text-red-500">{{ formError }}</p>
             <UButton type="submit" color="primary" block :loading="saving">{{ editing ? 'Update' : 'Create' }}</UButton>
           </form>

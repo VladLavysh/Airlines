@@ -21,9 +21,14 @@ async function bootstrap() {
 
   app.use(compression());
 
+  const corsOrigin = config.getOrThrow<string>('SERVER_CORS_ORIGIN');
   app.enableCors({
-    origin: config.get<string>('SERVER_CORS_ORIGIN'),
+    origin: corsOrigin.includes(',') 
+      ? corsOrigin.split(',').map(origin => origin.trim())
+      : corsOrigin,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.useGlobalPipes(

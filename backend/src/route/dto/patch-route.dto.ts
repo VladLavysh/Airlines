@@ -5,12 +5,12 @@ import { IRoute } from 'src/route/types/route.interface';
 export class PatchRouteDto implements Partial<IRoute> {
   @IsOptional()
   @IsString()
-  @MaxLength(32)
+  @MaxLength(3)
   departure_airport?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(32)
+  @MaxLength(3)
   arrival_airport?: string;
 
   @IsOptional()

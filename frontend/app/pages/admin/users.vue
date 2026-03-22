@@ -21,6 +21,11 @@
       </UTable>
     </UCard>
 
+    <div class="flex justify-center gap-2 mt-4">
+      <UButton :disabled="pagination.offset === 0" variant="outline" size="sm" @click="prevPage">Previous</UButton>
+      <UButton :disabled="items.length < pagination.limit" variant="outline" size="sm" @click="nextPage">Next</UButton>
+    </div>
+
     <UModal v-model:open="showForm">
       <template #content>
         <UCard>
@@ -80,6 +85,7 @@ const showForm = ref(false);
 const saving = ref(false);
 const editing = ref<number | null>(null);
 const formError = ref('');
+const pagination = reactive({ limit: 10, offset: 0 });
 
 const form = reactive({
   first_name: '', last_name: '', email: '',
@@ -89,13 +95,9 @@ const form = reactive({
 async function fetchItems() {
   loading.value = true;
   try {
-    // Admin can fetch users by ID; there's no list endpoint exposed, so we'll try
-    // We'll use a workaround: fetch current user info page or specific IDs
-    // Actually the backend has GET /user/:id for admin, but no list.
-    // We'll display a message and allow create/edit by ID.
-    items.value = [];
-    loading.value = false;
-  } catch { items.value = []; loading.value = false; }
+    items.value = await api<any[]>('/user', { query: { limit: pagination.limit, offset: pagination.offset } });
+  } catch { items.value = []; }
+  finally { loading.value = false; }
 }
 
 function openCreate() {
@@ -133,9 +135,10 @@ async function save() {
       body.password = form.password;
       await api('/user', { method: 'POST', body });
       toast.add({ title: 'User created', color: 'success' });
+      pagination.offset = 0;
     }
     showForm.value = false;
-    fetchItems();
+    await fetchItems();
   } catch (e: any) {
     formError.value = e?.data?.message || 'Failed to save';
   } finally { saving.value = false; }
@@ -151,6 +154,9 @@ async function confirmDelete(item: any) {
     toast.add({ title: 'Error', description: e?.data?.message || 'Failed to delete', color: 'error' });
   }
 }
+
+function nextPage() { pagination.offset += pagination.limit; fetchItems(); }
+function prevPage() { pagination.offset = Math.max(0, pagination.offset - pagination.limit); fetchItems(); }
 
 onMounted(() => fetchItems());
 </script>

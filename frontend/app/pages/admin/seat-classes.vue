@@ -28,12 +28,14 @@
             <h3 class="text-lg font-semibold">{{ editing ? 'Edit' : 'Create' }} Seat Class</h3>
           </template>
           <form @submit.prevent="save" class="space-y-4">
-            <UFormField label="Name">
-              <UInput v-model="form.name" required />
-            </UFormField>
-            <UFormField label="Price Multiplier">
-              <UInput v-model.number="form.price_multiplier" type="number" step="0.01" min="0.01" required />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField label="Name">
+                <UInput v-model="form.name" required />
+              </UFormField>
+              <UFormField label="Price Multiplier">
+                <UInput v-model.number="form.price_multiplier" type="number" step="0.01" min="0.01" required />
+              </UFormField>
+            </div>
             <p v-if="formError" class="text-sm text-red-500">{{ formError }}</p>
             <UButton type="submit" color="primary" block :loading="saving">{{ editing ? 'Update' : 'Create' }}</UButton>
           </form>
@@ -98,9 +100,10 @@ async function save() {
     } else {
       await api('/seat-class', { method: 'POST', body: { ...form } });
       toast.add({ title: 'Seat class created', color: 'success' });
+      pagination.offset = 0;
     }
     showForm.value = false;
-    fetchItems();
+    await fetchItems();
   } catch (e: any) {
     formError.value = e?.data?.message || 'Failed to save';
   } finally { saving.value = false; }

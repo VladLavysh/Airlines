@@ -7,6 +7,11 @@ import * as argon2 from 'argon2';
 export class UserService {
   constructor(private repo: UserRepository) {}
 
+  async findAll(data: { limit: number; offset: number; order_by?: string; order?: 'asc' | 'desc' }) {
+    const users = await this.repo.findAll(data);
+    return users.map(({ password, ...userWithoutPassword }) => userWithoutPassword);
+  }
+
   async getUserById(id: number) {
     const rows = await this.repo.findOneById(id);
 

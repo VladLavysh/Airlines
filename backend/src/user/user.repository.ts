@@ -1,11 +1,24 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { eq, isNull, and } from 'drizzle-orm';
+import { eq, isNull, and, asc, desc } from 'drizzle-orm';
 import { user } from 'src/db/schema';
 import { IUser } from './types/user.interface';
 
 @Injectable()
 export class UserRepository {
   constructor(@Inject('DB') private readonly db: any) {}
+
+  async findAll(data: { limit: number; offset: number; order_by?: string; order?: 'asc' | 'desc' }) {
+    const { limit, offset, order_by = 'id', order = 'asc' } = data;
+    const orderColumn = user[order_by] || user.id;
+    const orderFn = order === 'desc' ? desc : asc;
+
+    return this.db.query.user.findMany({
+      where: isNull(user.deleted_at),
+      orderBy: orderFn(orderColumn),
+      limit,
+      offset,
+    });
+  }
 
   async findOneById(id: number) {
     return this.db

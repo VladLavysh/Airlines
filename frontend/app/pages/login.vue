@@ -5,26 +5,60 @@
         <h1 class="text-2xl font-bold text-center">Login</h1>
       </template>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
-        <UFormGroup label="Email" name="email">
-          <UInput
-            v-model="form.email"
-            type="email"
-            placeholder="you@example.com"
-            icon="i-lucide-mail"
-            required
-          />
-        </UFormGroup>
+      <UAlert
+        icon="i-lucide-info"
+        color="info"
+        variant="soft"
+        title="Demo Credentials"
+        description="Click to auto-fill credentials for testing"
+        class="mb-4"
+      >
+        <template #actions>
+          <div class="flex gap-2">
+            <UButton
+              size="xs"
+              color="neutral"
+              variant="soft"
+              @click="fillUser"
+            >
+              User
+            </UButton>
+            <UButton
+              size="xs"
+              color="neutral"
+              variant="soft"
+              @click="fillAdmin"
+            >
+              Admin
+            </UButton>
+          </div>
+        </template>
+      </UAlert>
 
-        <UFormGroup label="Password" name="password">
-          <UInput
-            v-model="form.password"
-            type="password"
-            placeholder="Your password"
-            icon="i-lucide-lock"
-            required
-          />
-        </UFormGroup>
+      <form @submit.prevent="handleLogin" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <UFormGroup label="Email" name="email">
+            <UInput
+              v-model="form.email"
+              type="email"
+              placeholder="you@example.com"
+              icon="i-lucide-mail"
+              size="lg"
+              required
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Password" name="password">
+            <UInput
+              v-model="form.password"
+              type="password"
+              placeholder="Your password"
+              icon="i-lucide-lock"
+              size="lg"
+              required
+            />
+          </UFormGroup>
+        </div>
 
         <UButton type="submit" color="primary" block :loading="loading">
           Login
@@ -51,6 +85,16 @@ const auth = useAuthStore();
 const form = reactive({ email: '', password: '' });
 const loading = ref(false);
 const error = ref('');
+
+function fillUser() {
+  form.email = 'user@mail.com';
+  form.password = 'someTestPass_123';
+}
+
+function fillAdmin() {
+  form.email = 'admin@mail.com';
+  form.password = 'someTestPass_123';
+}
 
 async function handleLogin() {
   loading.value = true;
