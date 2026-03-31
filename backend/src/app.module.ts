@@ -27,6 +27,18 @@ import { TicketModule } from './ticket/ticket.module';
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'info',
+        genReqId: (req, res) => {
+          const existingId = req.headers['x-request-id'];
+          if (existingId) return existingId;
+
+          const id = crypto.randomUUID().slice(0, 8);
+          res.setHeader('x-request-id', id);
+          
+          return id;
+        },
+        customProps: (req, _res) => ({
+          traceId: req.id,
+        }),
         transport:
           process.env.NODE_ENV === 'production'
             ? undefined
@@ -34,6 +46,8 @@ import { TicketModule } from './ticket/ticket.module';
                 target: 'pino-pretty',
                 options: {
                   colorize: true,
+                  messageFormat: '{traceId} {msg}',
+                  ignore: 'pid,hostname,traceId',
                 },
               },
       },

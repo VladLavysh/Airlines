@@ -14,16 +14,21 @@ import { FlightStatus } from 'src/flight/types/flight.interface';
 import { IsValidEnum } from 'src/common/validators/is-valid-enum.validator';
 
 export class GetFlightsQueryDto implements IGetAllFlights {
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  limit: number = 10;
+  // @Transform(({ value }) => parseInt(value, 10))
+  // @IsInt()
+  // @Min(1)
+  // @Max(100)
+  // limit: number = 10;
+
+  // @Transform(({ value }) => parseInt(value, 10))
+  // @IsInt()
+  // @Min(0)
+  // offset: number = 0;
 
   @Transform(({ value }) => parseInt(value, 10))
+  @IsOptional()
   @IsInt()
-  @Min(0)
-  offset: number = 0;
+  cursor?: number;
 
   @Transform(({ value }) => value.toLowerCase())
   @IsNotEmpty()

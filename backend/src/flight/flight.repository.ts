@@ -10,8 +10,7 @@ export class FlightRepository {
 
   async findAll(data: IGetAllFlights) {
     const {
-      limit,
-      offset,
+      cursor,
       order_by,
       order,
       flight_status,
@@ -29,7 +28,10 @@ export class FlightRepository {
     const orderFn = order === 'desc' ? desc : asc;
 
     return this.db.query.flight.findMany({
-      where: filters.length > 0 ? and(...filters) : undefined,
+      where: and(
+        cursor ? gte(flight.id, cursor) : undefined,
+        ...filters
+      ),
       columns: {
         route_id: false,
         airline_id: false
@@ -53,8 +55,7 @@ export class FlightRepository {
         },
       },
       orderBy: orderFn(orderColumn),
-      limit,
-      offset
+      limit: 10
     });
   }
 

@@ -14,15 +14,13 @@ export class FlightService {
     minSeatClassMultiplier: string | null,
     maxSeatClassMultiplier: string | null,
   ) {
-    if (!minSeatClassMultiplier || !maxSeatClassMultiplier) {
-      return { price_from: null, price_to: null };
-    }
-
     const base = parseFloat(basePrice);
     const airlineMult = parseFloat(airlineMultiplier);
     const aircraftMult = parseFloat(aircraftMultiplier);
-    const minMult = parseFloat(minSeatClassMultiplier);
-    const maxMult = parseFloat(maxSeatClassMultiplier);
+    
+    // Use default multiplier of 1.0 if aircraft has no seats configured
+    const minMult = minSeatClassMultiplier ? parseFloat(minSeatClassMultiplier) : 1.0;
+    const maxMult = maxSeatClassMultiplier ? parseFloat(maxSeatClassMultiplier) : 1.0;
 
     const price_from = (base * airlineMult * aircraftMult * minMult).toFixed(2);
     const price_to = (base * airlineMult * aircraftMult * maxMult).toFixed(2);

@@ -33,47 +33,55 @@
     <section class="py-8">
       <h2 class="text-2xl font-semibold mb-6">Available Flights</h2>
 
-      <div v-if="loading" class="flex justify-center py-12">
+      <div v-if="loading && flights.length === 0" class="flex justify-center py-12">
         <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary" />
       </div>
 
-      <div v-else-if="flights.length === 0" class="text-center py-12 text-gray-500">
+      <div v-else-if="!loading && flights.length === 0" class="text-center py-12 text-gray-500">
         No flights found. Try adjusting your search.
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-if="flights.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <UCard
-          v-for="flight in flights"
+          v-for="(flight, index) in flights"
           :key="flight.id"
-          class="hover:shadow-lg transition-shadow cursor-pointer"
+          :class="[
+            'hover:shadow-lg transition-all cursor-pointer border-l-4',
+            index % 2 === 0 
+              ? 'bg-white dark:bg-gray-900 border-l-blue-400' 
+              : 'bg-gray-50 dark:bg-gray-800 border-l-teal-400'
+          ]"
           @click="navigateTo(`/flights/${flight.id}`)"
         >
           <div class="flex items-center justify-between mb-3">
             <UBadge :color="statusColor(flight.flight_status)" variant="subtle">
               {{ flight.flight_status }}
             </UBadge>
-            <span class="text-sm text-gray-500">{{ flight.airline?.name }}</span>
+            <span class="text-sm text-gray-500 dark:text-gray-400">{{ flight.airline?.name }}</span>
           </div>
 
           <div class="flex items-center justify-between mb-4">
             <div class="text-center">
               <div class="text-lg font-bold">{{ flight.route?.departure_airport }}</div>
-              <div class="text-xs text-gray-500">{{ formatTime(flight.departure_time) }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ formatTime(flight.departure_time) }}</div>
             </div>
-            <div class="flex-1 mx-4 border-t border-dashed border-gray-300 relative">
+            <div class="flex-1 mx-4 border-t border-dashed border-gray-300 dark:border-gray-600 relative">
               <UIcon
                 name="i-lucide-plane"
-                class="w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 text-primary"
+                :class="[
+                  'w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary',
+                  index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'
+                ]"
               />
             </div>
             <div class="text-center">
               <div class="text-lg font-bold">{{ flight.route?.arrival_airport }}</div>
-              <div class="text-xs text-gray-500">{{ formatTime(flight.arrival_time) }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ formatTime(flight.arrival_time) }}</div>
             </div>
           </div>
 
           <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">
+            <span class="text-sm text-gray-500 dark:text-gray-400">
               {{ flight.aircraft?.name }}
             </span>
             <span v-if="flight.price_from" class="font-semibold text-primary">
@@ -83,6 +91,18 @@
         </UCard>
       </div>
     </section>
+    <div v-if="flights.length > 0" class="flex justify-center mt-2">
+      <UButton
+        variant="outline"
+        :color="hasMore ? 'primary' : 'neutral'"
+        :icon="hasMore ? 'i-lucide-chevron-down' : 'i-lucide-check'"
+        :loading="loading"
+        :disabled="!hasMore"
+        @click="() => fetchFlights()"
+      >
+        {{ hasMore ? 'Load More Flights' : 'All Flights Loaded' }}
+      </UButton>
+    </div>
   </div>
 </template>
 
@@ -97,14 +117,34 @@ const search = reactive({
 
 const flights = ref<any[]>([]);
 const loading = ref(true);
+const hasMore = ref(true);
 
-async function fetchFlights(params: Record<string, any> = {}) {
+async function fetchFlights(params: Record<string, any> = {}, reset = false) {
+  if (!hasMore.value && !reset) return;
+  
   loading.value = true;
+  if (reset) {
+    flights.value = [];
+    hasMore.value = true;
+  }
+  
+  const lastItemId = flights.value.at(-1)?.id ?? null;
   try {
-    const data = await api<any[]>('/flight', { query: { limit: 12, ...params } });
-    flights.value = data;
+    const data = await api<any[]>('/flight', {
+      query: {
+        ...(lastItemId ? { cursor: lastItemId } : {}),
+        ...params
+      }
+    });
+    
+    if (data.length === 0 || data.length < 10) {
+      hasMore.value = false;
+    }
+    
+    flights.value = [...flights.value, ...data];
   } catch {
     flights.value = [];
+    hasMore.value = false;
   } finally {
     loading.value = false;
   }
@@ -115,7 +155,7 @@ function searchFlights() {
   if (search.departure) params.departure_airport = search.departure;
   if (search.arrival) params.arrival_airport = search.arrival;
   if (search.date) params.departure_time = search.date;
-  fetchFlights(params);
+  fetchFlights(params, true);
 }
 
 function formatTime(dateStr: string) {

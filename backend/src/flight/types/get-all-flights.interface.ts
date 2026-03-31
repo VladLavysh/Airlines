@@ -4,8 +4,7 @@ export const FLIGHT_ORDER_BY_FIELDS = ['departure_time', 'arrival_time', 'flight
 export type FlightOrderByField = (typeof FLIGHT_ORDER_BY_FIELDS)[number];
 
 export interface IGetAllFlights extends IEntityFields {
-  limit: number;
-  offset: number;
+  cursor?: number;
   order_by: FlightOrderByField;
   order: 'asc' | 'desc';
 }

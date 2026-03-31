@@ -1,6 +1,6 @@
 export enum FlightStatus {
+  AVAILABLE = 'available',
   PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
   DELAYED = 'delayed',
