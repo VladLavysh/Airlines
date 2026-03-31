@@ -49,7 +49,7 @@ async function bootstrap() {
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   app.setGlobalPrefix('api/v1');
 
-  const port = config.get<number>('SERVER_PORT') || 3000;
+  const port = config.get<number>('SERVER_PORT') || 4000;
   app.listen(port);
 }
 bootstrap();

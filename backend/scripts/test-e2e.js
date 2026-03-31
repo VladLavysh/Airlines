@@ -6,7 +6,7 @@ dotenvConfig({ path: '.env.test', override: false });
 
 const defaultEnv = {
   NODE_ENV: 'test',
-  SERVER_CORS_ORIGIN: 'http://localhost:3000',
+  SERVER_CORS_ORIGIN: 'http://localhost:4000',
   DATABASE_HOST: 'localhost',
   DATABASE_PORT: '5433',
   DATABASE_USER: 'postgres',

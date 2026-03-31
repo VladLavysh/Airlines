@@ -90,7 +90,7 @@ npm run start:container
 ```
 
 This will start:
-- **API Server** on port 3000 (http://localhost:3000)
+- **API Server** on port 4000 (http://localhost:4000)
 - **PostgreSQL** database on port 5432 with health checks
 - **Redis** cache on port 6379 with health checks
 - **Swagger API Docs** at http://localhost:3000/api/v1/docs
@@ -125,7 +125,7 @@ npm run dev
 
 The frontend will be available at http://localhost:3002 (or next available port).
 
-**Note**: Make sure the backend is running before starting the frontend. The frontend connects to the backend API at `http://localhost:3000/api/v1`.
+**Note**: Make sure the backend is running before starting the frontend. The frontend connects to the backend API at `http://localhost:4000/api/v1`.
 
 ### Database Management
 
@@ -201,7 +201,7 @@ The documentation includes:
 ## Application URLs
 
 - **Frontend**: http://localhost:3002 (or next available port)
-- **Backend API**: http://localhost:3000/api/v1
+- **Backend API**: http://localhost:4000/api/v1
 - **API Documentation**: http://localhost:3000/api/v1/docs
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379

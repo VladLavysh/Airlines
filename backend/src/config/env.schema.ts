@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const EnvSchema = z.object({
   // Server Configuration
-  SERVER_PORT: z.coerce.number().default(3000),
+  SERVER_PORT: z.coerce.number().default(4000),
   SERVER_NODE_ENV: z.enum(['development', 'production']).default('development'),
   SERVER_CORS_ORIGIN: z.string().min(1),
 
