@@ -38,15 +38,10 @@ export class CreateTicketDto {
   @Min(1)
   booking_id: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @Min(1)
-  flight_id: number;
-
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  seat_id: number;
+  flight_id?: number;
 
   @IsNotEmpty()
   @ValidateNested()

@@ -8,8 +8,8 @@ import { UserRole } from 'src/user/types/user.interface';
 import type { AuthenticatedUser } from 'src/auth/types/authenticated-user.interface';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { PatchTicketDto } from './dto/patch-ticket.dto';
-import { eq } from 'drizzle-orm';
-import { flight, route, airline, aircraft, seat, seat_class } from 'src/db/schema';
+import { eq, and } from 'drizzle-orm';
+import { flight, route, airline, aircraft, seat, seat_class, ticket } from 'src/db/schema';
 
 @Injectable()
 export class TicketService {
@@ -102,19 +102,59 @@ export class TicketService {
       throw new ForbiddenException('You can only add tickets to your own bookings');
     }
 
+    // Get flight_id from booking
+    const flightId = existingBooking.flight_id;
+
     const { passenger: passengerData, ...ticketFields } = data;
 
     return await this.db.transaction(async (tx: any) => {
+      // Get flight to find aircraft_id
+      const flightData = await tx.query.flight.findFirst({
+        where: eq(flight.id, flightId),
+      });
+
+      if (!flightData) {
+        throw new NotFoundException('Flight not found');
+      }
+
+      // Find all seats on this aircraft
+      const allAircraftSeats = await tx.query.seat.findMany({
+        where: eq(seat.aircraft_id, flightData.aircraft_id),
+      });
+
+      if (allAircraftSeats.length === 0) {
+        throw new NotFoundException('No seats available on this aircraft');
+      }
+
+      // Get already booked seat IDs for this flight
+      const bookedTickets = await tx.query.ticket.findMany({
+        where: eq(ticket.flight_id, flightId),
+        columns: { seat_id: true },
+      });
+
+      const bookedSeatIds = new Set(bookedTickets.map(t => t.seat_id));
+
+      // Filter out booked seats
+      const availableSeats = allAircraftSeats.filter(s => !bookedSeatIds.has(s.id));
+
+      if (availableSeats.length === 0) {
+        throw new ForbiddenException('No available seats on this flight');
+      }
+
+      // Randomly select an available seat
+      const randomIndex = Math.floor(Math.random() * availableSeats.length);
+      const seatData = availableSeats[randomIndex];
+
       const [newPassenger] = await this.passengerRepo.createOne(passengerData, tx);
 
-      const price = await this.calculatePrice(ticketFields.flight_id, ticketFields.seat_id, tx);
+      const price = await this.calculatePrice(flightId, seatData.id, tx);
 
       const ticketData: ITicket = {
         price,
         currency: 'USD',
         booking_id: ticketFields.booking_id,
-        flight_id: ticketFields.flight_id,
-        seat_id: ticketFields.seat_id,
+        flight_id: flightId,
+        seat_id: seatData.id,
         passenger_id: newPassenger.id,
       };
 

@@ -133,8 +133,8 @@ async function fetchFlight() {
 async function bookFlight() {
   booking.value = true;
   try {
-    const newBooking = await api<any>('/booking', { method: 'POST', body: {} });
-    toast.add({ title: 'Booking created!', description: 'Now add tickets to your booking.', color: 'success' });
+    const newBooking = await api<any>('/booking', { method: 'POST', body: { flight_id: Number(route.params.id) } });
+    toast.add({ title: 'Booking created!', description: 'Now add passengers to your booking.', color: 'success' });
     navigateTo(`/bookings/${newBooking.id}`);
   } catch (e: any) {
     toast.add({ title: 'Error', description: e?.data?.message || 'Failed to create booking', color: 'error' });

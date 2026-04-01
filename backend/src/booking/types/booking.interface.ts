@@ -7,4 +7,5 @@ export enum BookingStatus {
 export interface IBooking {
   status: BookingStatus;
   user_id: number;
+  flight_id: number;
 }

@@ -57,6 +57,13 @@
       "when": 1773915072731,
       "tag": "0007_aspiring_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1775055990663,
+      "tag": "0008_early_richard_fisk",
+      "breakpoints": true
     }
   ]
 }

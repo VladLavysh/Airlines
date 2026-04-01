@@ -31,13 +31,15 @@ export class BookingService {
     return booking;
   }
 
-  createBooking(userId: number, data?: { status?: BookingStatus }) {
+  async createBooking(userId: number, data: { status?: BookingStatus; flight_id: number }) {
     const bookingData: IBooking = {
       status: data?.status || BookingStatus.PENDING,
       user_id: userId,
+      flight_id: data.flight_id,
     };
 
-    return this.repo.createOne(bookingData);
+    const [booking] = await this.repo.createOne(bookingData);
+    return booking;
   }
 
   async updateBookingById(user: AuthenticatedUser, id: number, data: Partial<IBooking>) {
@@ -49,6 +51,14 @@ export class BookingService {
 
     if (user.role !== UserRole.ADMIN && existing.user?.id !== user.id) {
       throw new ForbiddenException('You can only update your own bookings');
+    }
+
+    // Validate that booking has at least one passenger before confirming
+    if (data.status === BookingStatus.CONFIRMED) {
+      const ticketCount = await this.repo.countTicketsByBookingId(id);
+      if (ticketCount === 0) {
+        throw new ForbiddenException('Cannot confirm booking without passengers. Please add at least one passenger first.');
+      }
     }
 
     const rows = await this.repo.updateOneById(id, data);

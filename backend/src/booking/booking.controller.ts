@@ -57,7 +57,7 @@ export class BookingController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() body: CreateBookingDto,
   ) {
-    return this.bookingService.createBooking(user.id, body);
+    return this.bookingService.createBooking(user.id, { flight_id: body.flight_id, status: body.status });
   }
 
   @Patch(':id')

@@ -2,7 +2,7 @@
   <div>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-bold">My Bookings</h1>
-      <UButton color="primary" icon="i-lucide-plus" @click="createBooking" :loading="creating">
+      <UButton color="primary" icon="i-lucide-plus" @click="navigateTo('/flights')" :loading="creating">
         New Booking
       </UButton>
     </div>

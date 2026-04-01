@@ -214,15 +214,26 @@ export const booking = pgTable(
         onDelete: 'cascade',
         onUpdate: 'cascade',
       }),
+    flight_id: integer('flight_id')
+      .notNull()
+      .references(() => flight.id, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
   },
   (table) => [
     index('booking_user_id_idx').on(table.user_id),
+    index('booking_flight_id_idx').on(table.flight_id),
   ]
 );
 export const bookingRelations = relations(booking, ({ one, many }) => ({
   user: one(user, {
     fields: [booking.user_id],
     references: [user.id],
+  }),
+  flight: one(flight, {
+    fields: [booking.flight_id],
+    references: [flight.id],
   }),
   tickets: many(ticket),
 }));

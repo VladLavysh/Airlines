@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { booking } from 'src/db/schema';
-import { eq, ilike, SQL, asc, desc, and } from 'drizzle-orm';
+import { booking, ticket } from 'src/db/schema';
+import { eq, ilike, SQL, asc, desc, and, lte, sql } from 'drizzle-orm';
 import { IGetAllBookings } from './types/get-all-bookings.interface';
 import { IBooking } from './types/booking.interface';
 
@@ -22,7 +22,12 @@ export class BookingRepository {
     return this.db.query.booking.findMany({
       where: filters.length > 0 ? and(...filters) : undefined,
       columns: {
+        id: true,
         user_id: false,
+        flight_id: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
       },
       with: {
         user: {
@@ -31,6 +36,18 @@ export class BookingRepository {
             email: true,
             first_name: true,
             last_name: true,
+          },
+        },
+        flight: {
+          columns: {
+            route_id: false,
+            aircraft_id: false,
+            airline_id: false,
+          },
+          with: {
+            route: true,
+            airline: true,
+            aircraft: true,
           },
         },
         tickets: {
@@ -78,9 +95,26 @@ export class BookingRepository {
     return this.db.query.booking.findMany({
       where: and(...filters),
       columns: {
+        id: true,
         user_id: false,
+        flight_id: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
       },
       with: {
+        flight: {
+          columns: {
+            route_id: false,
+            aircraft_id: false,
+            airline_id: false,
+          },
+          with: {
+            route: true,
+            airline: true,
+            aircraft: true,
+          },
+        },
         tickets: {
           columns: {
             booking_id: false,
@@ -116,7 +150,12 @@ export class BookingRepository {
     return this.db.query.booking.findFirst({
       where: eq(booking.id, id),
       columns: {
+        id: true,
         user_id: false,
+        flight_id: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
       },
       with: {
         user: {
@@ -125,6 +164,18 @@ export class BookingRepository {
             email: true,
             first_name: true,
             last_name: true,
+          },
+        },
+        flight: {
+          columns: {
+            route_id: false,
+            aircraft_id: false,
+            airline_id: false,
+          },
+          with: {
+            route: true,
+            airline: true,
+            aircraft: true,
           },
         },
         tickets: {
@@ -175,5 +226,29 @@ export class BookingRepository {
       .delete(booking)
       .where(eq(booking.id, id))
       .returning();
+  }
+
+  async cancelExpiredPendingBookings(expirationTime: Date): Promise<number> {
+    const result = await this.db
+      .update(booking)
+      .set({ status: 'cancelled', updated_at: new Date() })
+      .where(
+        and(
+          eq(booking.status, 'pending'),
+          lte(booking.created_at, expirationTime)
+        )
+      )
+      .returning({ id: booking.id });
+    
+    return result.length;
+  }
+
+  async countTicketsByBookingId(bookingId: number): Promise<number> {
+    const result = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(ticket)
+      .where(eq(ticket.booking_id, bookingId));
+    
+    return result[0]?.count || 0;
   }
 }
