@@ -10,6 +10,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { PatchTicketDto } from './dto/patch-ticket.dto';
 import { eq, and } from 'drizzle-orm';
 import { flight, route, airline, aircraft, seat, seat_class, ticket } from 'src/db/schema';
+import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
 
 @Injectable()
 export class TicketService {
@@ -17,6 +18,7 @@ export class TicketService {
     private ticketRepo: TicketRepository,
     private passengerRepo: PassengerRepository,
     private bookingRepo: BookingRepository,
+    private cacheInvalidation: CacheInvalidationService,
     @Inject('DB') private readonly db: any,
   ) {}
 
@@ -126,11 +128,13 @@ export class TicketService {
         throw new NotFoundException('No seats available on this aircraft');
       }
 
-      // Get already booked seat IDs for this flight
-      const bookedTickets = await tx.query.ticket.findMany({
-        where: eq(ticket.flight_id, flightId),
-        columns: { seat_id: true },
-      });
+      // Get already booked seat IDs for this flight with row-level lock
+      // This prevents concurrent transactions from booking the same seat
+      const bookedTickets = await tx
+        .select({ seat_id: ticket.seat_id })
+        .from(ticket)
+        .where(eq(ticket.flight_id, flightId))
+        .for('update');
 
       const bookedSeatIds = new Set(bookedTickets.map(t => t.seat_id));
 
@@ -161,6 +165,10 @@ export class TicketService {
       const [newTicket] = await this.ticketRepo.createOne(ticketData, tx);
 
       return this.ticketRepo.findOneById(newTicket.id);
+    }).then(async (result) => {
+      // Invalidate ticket and booking cache after transaction commits
+      await this.cacheInvalidation.invalidateTicket(result.id, data.booking_id, flightId);
+      return result;
     });
   }
 
@@ -177,25 +185,73 @@ export class TicketService {
 
     const updateData: Partial<ITicket> = {};
     if (data.currency !== undefined) updateData.currency = data.currency;
+    
     if (data.seat_id !== undefined) {
-      updateData.seat_id = data.seat_id;
-      updateData.price = await this.calculatePrice(existing.flight_id, data.seat_id);
+      const newSeatId = data.seat_id;
+      
+      // Use transaction with locking when changing seats
+      return await this.db.transaction(async (tx: any) => {
+        // Lock all tickets for this flight to prevent concurrent seat changes
+        await tx
+          .select({ seat_id: ticket.seat_id })
+          .from(ticket)
+          .where(eq(ticket.flight_id, existing.flight_id))
+          .for('update');
+
+        // Check if the new seat is already taken
+        const seatTaken = await tx.query.ticket.findFirst({
+          where: and(
+            eq(ticket.flight_id, existing.flight_id),
+            eq(ticket.seat_id, newSeatId),
+          ),
+        });
+
+        if (seatTaken) {
+          throw new ForbiddenException('This seat is already taken');
+        }
+
+        updateData.seat_id = newSeatId;
+        updateData.price = await this.calculatePrice(existing.flight_id, newSeatId, tx);
+
+        const rows = await this.ticketRepo.updateOneById(id, updateData, tx);
+
+        if (rows.length === 0) {
+          throw new NotFoundException('Ticket not found');
+        }
+
+        return rows[0];
+      }).then(async (result) => {
+        // Invalidate cache after transaction commits
+        await this.cacheInvalidation.invalidateTicket(id, existing.booking_id, existing.flight_id);
+        return result;
+      });
     }
 
+    // Simple update without seat change (no locking needed)
     const rows = await this.ticketRepo.updateOneById(id, updateData);
 
     if (rows.length === 0) {
       throw new NotFoundException('Ticket not found');
     }
 
+    // Invalidate cache
+    await this.cacheInvalidation.invalidateTicket(id, existing.booking_id, existing.flight_id);
+    
     return rows[0];
   }
 
   async deleteTicketById(id: number) {
+    const existing = await this.ticketRepo.findOneRawById(id);
+    
     const rows = await this.ticketRepo.deleteOneById(id);
 
     if (rows.length === 0) {
       throw new NotFoundException('Ticket not found');
+    }
+
+    // Invalidate cache
+    if (existing) {
+      await this.cacheInvalidation.invalidateTicket(id, existing.booking_id, existing.flight_id);
     }
   }
 }

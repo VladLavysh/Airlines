@@ -18,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
 import { PassengerModule } from './passenger/passenger.module';
 import { BookingModule } from './booking/booking.module';
 import { TicketModule } from './ticket/ticket.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { TicketModule } from './ticket/ticket.module';
       inject: [ConfigService],
     }),
     DbModule,
+    CommonModule,
     AirlineModule,
     AircraftModule,
     RouteModule,

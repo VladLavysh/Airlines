@@ -64,6 +64,13 @@
       "when": 1775055990663,
       "tag": "0008_early_richard_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1775063335167,
+      "tag": "0009_typical_warlock",
+      "breakpoints": true
     }
   ]
 }

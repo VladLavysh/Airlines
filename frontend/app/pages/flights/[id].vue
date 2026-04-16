@@ -114,6 +114,7 @@ const route = useRoute();
 const { api } = useApi();
 const auth = useAuthStore();
 const toast = useToast();
+const { generateIdempotencyKey } = useIdempotency();
 
 const flight = ref<any>(null);
 const loading = ref(true);
@@ -133,7 +134,14 @@ async function fetchFlight() {
 async function bookFlight() {
   booking.value = true;
   try {
-    const newBooking = await api<any>('/booking', { method: 'POST', body: { flight_id: Number(route.params.id) } });
+    const idempotencyKey = generateIdempotencyKey();
+    const newBooking = await api<any>('/booking', { 
+      method: 'POST', 
+      body: { flight_id: Number(route.params.id) },
+      headers: {
+        'idempotency-key': idempotencyKey,
+      },
+    });
     toast.add({ title: 'Booking created!', description: 'Now add passengers to your booking.', color: 'success' });
     navigateTo(`/bookings/${newBooking.id}`);
   } catch (e: any) {

@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { AirlineRepository } from './airline.repository';
 import { IGetAllAirlines } from './types/get-all-airlines.interface';
 import { IAirline } from './types/airline.interface';
+import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
 
 @Injectable()
 export class AirlineService {
-  constructor(private repo: AirlineRepository) {}
+  constructor(
+    private repo: AirlineRepository,
+    private cacheInvalidation: CacheInvalidationService,
+  ) {}
 
   getAllAirlines(data: IGetAllAirlines) {
     return this.repo.findAll(data);
@@ -15,10 +19,14 @@ export class AirlineService {
     return this.repo.findOneById(id);
   }
 
-  createAirline(data: IAirline) {
+  async createAirline(data: IAirline) {
     const { name, iata_code, country, price_multiplier } = data;
 
-    return this.repo.createOne(name, iata_code, country, Number(price_multiplier));
+    const [airline] = await this.repo.createOne(name, iata_code, country, Number(price_multiplier));
+    
+    await this.cacheInvalidation.invalidateAirline(airline.id);
+    
+    return airline;
   }
 
   async updateAirlineById(id: number, data: Partial<IAirline>) {
@@ -28,6 +36,8 @@ export class AirlineService {
       throw new NotFoundException('Airline not found');
     }
 
+    await this.cacheInvalidation.invalidateAirline(id);
+    
     return rows[0];
   }
 
@@ -37,5 +47,7 @@ export class AirlineService {
     if (rows.length === 0) {
       throw new NotFoundException('Airline not found');
     }
+
+    await this.cacheInvalidation.invalidateAirline(id);
   }
 }

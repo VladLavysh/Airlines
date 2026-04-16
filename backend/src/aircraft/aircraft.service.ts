@@ -3,12 +3,14 @@ import { AircraftRepository } from './aircraft.repository';
 import type { IGetAllAircraft } from './types/get-all-aircraft.interface';
 import type { IAircraft } from './types/aircraft.interface';
 import { SeatRepository } from 'src/seat/seat.repository';
+import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
 
 @Injectable()
 export class AircraftService {
   constructor(
     private aircraftRepo: AircraftRepository,
     private seatRepo: SeatRepository,
+    private cacheInvalidation: CacheInvalidationService,
     @Inject('DB') private readonly db: any
   ) {}
 
@@ -30,7 +32,10 @@ export class AircraftService {
     const { seats, ...aircraftData } = data
 
     if (!seats.length) {
-      return this.aircraftRepo.createOne(data);
+      const [aircraft] = await this.aircraftRepo.createOne(data);
+      await this.cacheInvalidation.invalidateAircraft(aircraft.id, data.airline_id);
+
+      return aircraft;
     }
 
     return await this.db.transaction(async (tx: any) => {
@@ -39,7 +44,11 @@ export class AircraftService {
       await this.seatRepo.createMany(newAircraft.id, seats, tx)
 
       return this.aircraftRepo.findOneById(newAircraft.id, tx)
-    })
+    }).then(async (result) => {
+      await this.cacheInvalidation.invalidateAircraft(result.id, aircraftData.airline_id);
+
+      return result;
+    });
   }
 
   async updateAircraftById(id: number, data: Partial<IAircraft>) {
@@ -56,6 +65,8 @@ export class AircraftService {
         throw new NotFoundException('Aircraft not found');
       }
 
+      await this.cacheInvalidation.invalidateAircraft(id, data.airline_id);
+      
       return rows;
     }
 
@@ -75,6 +86,10 @@ export class AircraftService {
       }
 
       return this.aircraftRepo.findOneById(id, tx);
+    }).then(async (result) => {
+      await this.cacheInvalidation.invalidateAircraft(id, data.airline_id);
+      
+      return result;
     });
   }
 
@@ -84,5 +99,7 @@ export class AircraftService {
     if (rows.length === 0) {
       throw new NotFoundException('Aircraft not found');
     }
+
+    await this.cacheInvalidation.invalidateAircraft(id);
   }
 }

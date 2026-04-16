@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FlightRepository } from './flight.repository';
 import { IGetAllFlights } from './types/get-all-flights.interface';
 import { IFlight } from './types/flight.interface';
+import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
  
 @Injectable()
 export class FlightService {
-  constructor(private repo: FlightRepository) {}
+  constructor(
+    private repo: FlightRepository,
+    private cacheInvalidation: CacheInvalidationService,
+  ) {}
 
   private calculatePriceRange(
     basePrice: string,
@@ -69,17 +73,31 @@ export class FlightService {
     return { ...rest, price_from, price_to };
   }
  
-  createFlight(data: IFlight) {
-    return this.repo.createOne(data);
+  async createFlight(data: IFlight) {
+    const [flight] = await this.repo.createOne(data);
+    
+    // Invalidate flight cache
+    await this.cacheInvalidation.invalidateFlight(flight.id, data.route_id, data.airline_id, data.aircraft_id);
+    
+    return flight;
   }
  
   async updateFlightById(id: number, data: Partial<IFlight>) {
+    const existing = await this.repo.findOneById(id);
     const rows = await this.repo.updateOneById(id, data);
  
     if (rows.length === 0) {
       throw new NotFoundException('Flight not found');
     }
  
+    // Invalidate flight cache (use both old and new values if changed)
+    await this.cacheInvalidation.invalidateFlight(
+      id,
+      data.route_id || existing?.route?.id,
+      data.airline_id || existing?.airline?.id,
+      data.aircraft_id || existing?.aircraft?.id,
+    );
+    
     return rows[0];
   }
  
@@ -89,5 +107,8 @@ export class FlightService {
     if (rows.length === 0) {
       throw new NotFoundException('Flight not found');
     }
+ 
+    // Invalidate flight cache
+    await this.cacheInvalidation.invalidateFlight(id);
   }
 }

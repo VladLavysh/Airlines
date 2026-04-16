@@ -23,6 +23,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/user/types/user.interface';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import type { AuthenticatedUser } from 'src/auth/types/authenticated-user.interface';
+import { Idempotent } from 'src/common/decorators/idempotent.decorator';
 
 @Controller('booking')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -52,6 +53,7 @@ export class BookingController {
   }
 
   @Post()
+  @Idempotent()
   @Roles(UserRole.ADMIN, UserRole.USER)
   createBooking(
     @CurrentUser() user: AuthenticatedUser,

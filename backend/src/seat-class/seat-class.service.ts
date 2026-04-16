@@ -2,19 +2,27 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { SeatClassRepository } from './seat-class.repository';
 import { IGetAllSeatClasses } from './types/get-all-seat-classes.interface';
 import { ISeatClass } from './types/seat-class.interface';
+import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
 
 @Injectable()
 export class SeatClassService {
-  constructor(private repo: SeatClassRepository) {}
+  constructor(
+    private repo: SeatClassRepository,
+    private cacheInvalidation: CacheInvalidationService,
+  ) {}
 
   getAllSeatClasses(data: IGetAllSeatClasses) {
     return this.repo.findAll(data);
   }
 
-  createSeatClass(data: ISeatClass) {
+  async createSeatClass(data: ISeatClass) {
     const { name, price_multiplier } = data;
 
-    return this.repo.createOne(name, Number(price_multiplier));
+    const [seatClass] = await this.repo.createOne(name, Number(price_multiplier));
+    
+    await this.cacheInvalidation.invalidateSeatClass(seatClass.id);
+    
+    return seatClass;
   }
 
   async updateSeatClassById(id: number, data: Partial<ISeatClass>) {
@@ -24,6 +32,8 @@ export class SeatClassService {
       throw new NotFoundException('Seat class not found');
     }
 
+    await this.cacheInvalidation.invalidateSeatClass(id);
+    
     return rows[0];
   }
 
@@ -33,5 +43,7 @@ export class SeatClassService {
     if (rows.length === 0) {
       throw new NotFoundException('Seat class not found');
     }
+
+    await this.cacheInvalidation.invalidateSeatClass(id);
   }
 }

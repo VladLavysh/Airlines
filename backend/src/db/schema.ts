@@ -299,3 +299,34 @@ export const ticketRelations = relations(ticket, ({ one }) => ({
 export const passengerRelations = relations(passenger, ({ many }) => ({
   tickets: many(ticket),
 }));
+
+export const idempotency_key = pgTable(
+  'idempotency_key',
+  {
+    id: serial('id').primaryKey(),
+    key: varchar('key', { length: 255 }).notNull().unique(),
+    request_path: varchar('request_path', { length: 255 }).notNull(),
+    request_method: varchar('request_method', { length: 10 }).notNull(),
+    user_id: integer('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+      }),
+    response_code: integer('response_code').notNull(),
+    response_body: varchar('response_body', { length: 10000 }).notNull(),
+    created_at: timestamp('created_at').notNull().defaultNow(),
+    expires_at: timestamp('expires_at').notNull(),
+  },
+  (table) => [
+    index('idempotency_key_key_idx').on(table.key),
+    index('idempotency_key_user_id_idx').on(table.user_id),
+    index('idempotency_key_expires_at_idx').on(table.expires_at),
+  ]
+);
+export const idempotencyKeyRelations = relations(idempotency_key, ({ one }) => ({
+  user: one(user, {
+    fields: [idempotency_key.user_id],
+    references: [user.id],
+  }),
+}));

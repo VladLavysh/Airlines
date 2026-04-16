@@ -164,8 +164,10 @@ export class TicketRepository {
       .returning();
   }
 
-  async updateOneById(id: number, data: Partial<ITicket>) {
-    return this.db
+  async updateOneById(id: number, data: Partial<ITicket>, tx?: any) {
+    const dbClient = tx || this.db;
+    
+    return dbClient
       .update(ticket)
       .set(data)
       .where(eq(ticket.id, id))

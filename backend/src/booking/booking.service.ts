@@ -4,10 +4,14 @@ import { IGetAllBookings } from './types/get-all-bookings.interface';
 import { IBooking, BookingStatus } from './types/booking.interface';
 import { UserRole } from 'src/user/types/user.interface';
 import type { AuthenticatedUser } from 'src/auth/types/authenticated-user.interface';
+import { CacheInvalidationService } from 'src/common/services/cache-invalidation.service';
 
 @Injectable()
 export class BookingService {
-  constructor(private repo: BookingRepository) {}
+  constructor(
+    private repo: BookingRepository,
+    private cacheInvalidation: CacheInvalidationService,
+  ) {}
 
   getAllBookings(user: AuthenticatedUser, data: IGetAllBookings) {
     if (user.role === UserRole.ADMIN) {
@@ -39,6 +43,10 @@ export class BookingService {
     };
 
     const [booking] = await this.repo.createOne(bookingData);
+    
+    // Invalidate booking cache for this user
+    await this.cacheInvalidation.invalidateBooking(booking.id, userId);
+    
     return booking;
   }
 
@@ -67,6 +75,9 @@ export class BookingService {
       throw new NotFoundException('Booking not found');
     }
 
+    // Invalidate booking cache
+    await this.cacheInvalidation.invalidateBooking(id, existing.user?.id);
+    
     return rows[0];
   }
 
@@ -76,5 +87,8 @@ export class BookingService {
     if (rows.length === 0) {
       throw new NotFoundException('Booking not found');
     }
+
+    // Invalidate booking cache
+    await this.cacheInvalidation.invalidateBooking(id);
   }
 }
