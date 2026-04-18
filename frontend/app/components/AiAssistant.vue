@@ -9,7 +9,7 @@
       @click="isOpen = true"
     />
 
-    <UCard v-else class="w-96 shadow-2xl">
+    <UCard v-if="isOpen" class="w-96 shadow-2xl">
       <template #header>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -59,6 +59,7 @@
             placeholder="Ask me anything..."
             :disabled="loading"
             class="flex-1"
+            autofocus
           />
           <UButton
             type="submit"
