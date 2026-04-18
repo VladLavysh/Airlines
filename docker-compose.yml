@@ -27,6 +27,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      ollama:
+        condition: service_started
 
   # Database
   db:
@@ -62,6 +64,16 @@ services:
       timeout: 5s
       retries: 5
 
+  # Local AI model
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_dev
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
   # Database for e2e
   db_test:
     image: postgres:15
@@ -94,3 +106,4 @@ volumes:
   server_data:
   pg_data:
   redis_data:
+  ollama_data:

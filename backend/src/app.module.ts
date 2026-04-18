@@ -19,6 +19,7 @@ import { PassengerModule } from './passenger/passenger.module';
 import { BookingModule } from './booking/booking.module';
 import { TicketModule } from './ticket/ticket.module';
 import { CommonModule } from './common/common.module';
+import { AIModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -89,6 +90,7 @@ import { CommonModule } from './common/common.module';
     PassengerModule,
     BookingModule,
     TicketModule,
+    AIModule,
   ],
 })
 export class AppModule {}

@@ -28,6 +28,9 @@ export const EnvSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(1),
   JWT_ACCESS_EXPIRATION: z.string().default('1h'),
   JWT_REFRESH_EXPIRATION: z.string().default('30d'),
+
+  // AI integration
+  OLLAMA_API_URL: z.string().min(1),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
