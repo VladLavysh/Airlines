@@ -7,8 +7,8 @@ import {
   IsNotEmpty,
   MaxLength,
   IsIn,
-  IsDateString } from 'class-validator';
-import { Transform } from 'class-transformer';
+  IsDate } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { IGetAllFlights, FLIGHT_ORDER_BY_FIELDS } from 'src/flight/types/get-all-flights.interface';
 import { FlightStatus } from 'src/flight/types/flight.interface';
 import { IsValidEnum } from 'src/common/validators/is-valid-enum.validator';
@@ -60,10 +60,18 @@ export class GetFlightsQueryDto implements IGetAllFlights {
   airline_id?: number;
 
   @IsOptional()
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   departure_time?: Date;
 
   @IsOptional()
-  @IsDateString()
-  arrival_time?: Date;
+  @IsString()
+  @MaxLength(32)
+  departure_airport?: string;
+  
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  arrival_airport?: string;
 }
+

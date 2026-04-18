@@ -14,5 +14,6 @@ interface IEntityFields {
   aircraft_id?: number;
   airline_id?: number;
   departure_time?: Date;
-  arrival_time?: Date;
+  departure_airport?: string;
+  arrival_airport?: string;
 }

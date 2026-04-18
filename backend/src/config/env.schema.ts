@@ -31,6 +31,7 @@ export const EnvSchema = z.object({
 
   // AI integration
   OLLAMA_API_URL: z.string().min(1),
+  OLLAMA_MODEL: z.string().min(1),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -7,5 +7,6 @@ import { CacheLoggingInterceptor } from 'src/common/interceptors/cache-logging.i
 @Module({
   controllers: [FlightController],
   providers: [FlightService, FlightRepository, CacheLoggingInterceptor],
+  exports: [FlightService],
 })
 export class FlightModule {}

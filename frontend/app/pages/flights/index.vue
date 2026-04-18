@@ -33,17 +33,17 @@
     <section class="py-8">
       <h2 class="text-2xl font-semibold mb-6">Available Flights</h2>
 
-      <div v-if="loading && flights.length === 0" class="flex justify-center py-12">
+      <div v-if="flightsStore.loading && flightsStore.flights.length === 0" class="flex justify-center py-12">
         <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary" />
       </div>
 
-      <div v-else-if="!loading && flights.length === 0" class="text-center py-12 text-gray-500">
+      <div v-else-if="!flightsStore.loading && flightsStore.flights.length === 0" class="text-center py-12 text-gray-500">
         No flights found. Try adjusting your search.
       </div>
 
-      <div v-if="flights.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-if="flightsStore.flights.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <UCard
-          v-for="(flight, index) in flights"
+          v-for="(flight, index) in flightsStore.flights"
           :key="flight.id"
           :class="[
             'hover:shadow-lg transition-all cursor-pointer border-l-4',
@@ -91,16 +91,16 @@
         </UCard>
       </div>
     </section>
-    <div v-if="flights.length > 0" class="flex justify-center mt-2">
+    <div v-if="flightsStore.flights.length > 0" class="flex justify-center mt-2">
       <UButton
         variant="outline"
-        :color="hasMore ? 'primary' : 'neutral'"
-        :icon="hasMore ? 'i-lucide-chevron-down' : 'i-lucide-check'"
-        :loading="loading"
-        :disabled="!hasMore"
+        :color="flightsStore.hasMore ? 'primary' : 'neutral'"
+        :icon="flightsStore.hasMore ? 'i-lucide-chevron-down' : 'i-lucide-check'"
+        :loading="flightsStore.loading"
+        :disabled="!flightsStore.hasMore"
         @click="() => fetchFlights()"
       >
-        {{ hasMore ? 'Load More Flights' : 'All Flights Loaded' }}
+        {{ flightsStore.hasMore ? 'Load More Flights' : 'All Flights Loaded' }}
       </UButton>
     </div>
   </div>
@@ -108,6 +108,7 @@
 
 <script setup lang="ts">
 const { api } = useApi();
+const flightsStore = useFlightsStore();
 
 const search = reactive({
   departure: '',
@@ -115,20 +116,15 @@ const search = reactive({
   date: '',
 });
 
-const flights = ref<any[]>([]);
-const loading = ref(true);
-const hasMore = ref(true);
-
 async function fetchFlights(params: Record<string, any> = {}, reset = false) {
-  if (!hasMore.value && !reset) return;
-  
-  loading.value = true;
+  if (!flightsStore.hasMore && !reset) return;
+
+  flightsStore.loading = true;
   if (reset) {
-    flights.value = [];
-    hasMore.value = true;
+    flightsStore.clearFlights();
   }
-  
-  const lastItemId = flights.value.at(-1)?.id ?? null;
+
+  const lastItemId = flightsStore.flights.at(-1)?.id ?? null;
   try {
     const data = await api<any[]>('/flight', {
       query: {
@@ -136,17 +132,16 @@ async function fetchFlights(params: Record<string, any> = {}, reset = false) {
         ...params
       }
     });
-    
+
     if (data.length === 0 || data.length < 10) {
-      hasMore.value = false;
+      flightsStore.hasMore = false;
     }
-    
-    flights.value = [...flights.value, ...data];
+
+    flightsStore.addFlights(data);
   } catch {
-    flights.value = [];
-    hasMore.value = false;
+    flightsStore.clearFlights();
   } finally {
-    loading.value = false;
+    flightsStore.loading = false;
   }
 }
 
