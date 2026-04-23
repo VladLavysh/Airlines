@@ -10,6 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@ai-sdk/vue": "^3.0.168",
+    "@nanostores/react": "github:ai/react",
     "@nuxt/ui": "^4.5.1",
     "@pinia/nuxt": "^0.11.3",
     "nuxt": "^4.4.2",

@@ -26,6 +26,7 @@
     "db:push:local": "drizzle-kit push --config=drizzle.config.local.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.53",
     "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
@@ -36,6 +37,7 @@
     "@nestjs/schedule": "^6.1.1",
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/throttler": "^6.5.0",
+    "ai": "^6.0.168",
     "argon2": "^0.44.0",
     "cache-manager": "^7.2.8",
     "cache-manager-redis-yet": "^5.1.5",
@@ -48,6 +50,7 @@
     "keyv": "^5.6.0",
     "nestjs-pino": "^4.6.0",
     "ollama": "^0.6.3",
+    "ollama-ai-provider": "^1.2.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

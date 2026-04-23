@@ -111,9 +111,7 @@ async function sendMessage() {
       body: { question: userQuestion },
     });
 
-    console.log('DATA', response)
-
-    if (response?.type === 'search' && response.data.length > 0) {
+    if (response?.type === 'search' && response.data?.length > 0) {
       flightsStore.setFlights(response.data);
       messages.value.push({
         role: 'assistant',

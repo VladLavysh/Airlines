@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Ollama } from 'ollama'
+import { createOpenAI } from '@ai-sdk/openai';
+import { generateText, ModelMessage } from 'ai'
 import type { AIProvider } from './types/ai-provider.interface'
 import { systemPromptGemma2 } from './common/prompts'
 import { ResponseDTO } from './dto/answer.dto';
@@ -8,28 +9,31 @@ import { FlightService } from 'src/flight/flight.service';
 
 @Injectable()
 export class OllamaProvider implements AIProvider {
-  private readonly ollama: Ollama;
+  private readonly ollama: any;
   private flightService: FlightService
+  private messages: ModelMessage[] = [
+    { role: 'system', content: systemPromptGemma2 }
+  ]
 
   constructor(flightService: FlightService) {
-    this.ollama = new Ollama({
-      host: process.env.OLLAMA_API_URL || 'http://localhost:11434'
+    const openai = createOpenAI({
+      baseURL: (process.env.OLLAMA_API_URL || 'http://localhost:11434') + '/v1',
+      apiKey: 'ollama',
     });
+    this.ollama = openai(process.env.OLLAMA_MODEL || 'gemma2:2b');
     this.flightService = flightService;
   }
 
   async generateResponse(prompt: string): Promise<ResponseDTO> {
     try {
-      const response = await this.ollama.chat({
-        model: process.env.OLLAMA_MODEL || 'gemma2:2b',
-        messages: [
-          { role: 'system', content: systemPromptGemma2 },
-          { role: 'user', content: prompt }
-        ],
-        format: 'json'
+      this.messages.push({ role: 'user', content: prompt });
+
+      const { text } = await generateText({
+        model: this.ollama,
+        messages: this.messages
       })
 
-      const content = response.message.content.replace(/```json\n|\n```/g, '').trim();
+      const content = text.replace(/```json\n|\n```/g, '').trim();
 
       if (!content) {
         throw new Error('Empty response from Ollama');
